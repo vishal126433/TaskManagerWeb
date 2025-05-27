@@ -1,0 +1,57 @@
+.error-toast {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1000;
+    border-radius: 8px;
+    padding: 10px 16px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    font-weight: 500;
+    font-size: 14px;
+    transition: all 0.3s ease;
+  }
+  
+  /* Success message style (green) */
+  .error-toast.success {
+    background-color: #4caf50; /* Material green */
+    color: #ffffff;
+  }
+  
+  /* Error message style (red) */
+  .error-toast.error {
+    background-color: #f44336; /* Material red */
+    color: #ffffff;
+  }
+  
+  .main {
+    width: 100%;
+    min-height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 1rem;
+    box-sizing: inherit;
+    position: relative;
+  }
+  .toast-message {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1000;
+    border-radius: 8px;
+    padding: 10px 16px;
+    font-weight: 500;
+    font-size: 14px;
+    transition: all 0.3s ease;
+    color: #fff;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  }
+  
+  .toast-message.success {
+    background-color: #4caf50; /* Green for success */
+  }
+  
+  .toast-message.error {
+    background-color: #f44336; /* Red for error */
+  }
+  

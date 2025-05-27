@@ -1,0 +1,88 @@
+
+  <app-left-menu (collapsedChange)="isCollapsed = $event"></app-left-menu>
+
+  <div [ngStyle]="{ 'margin-left.px': isCollapsed ? 75 : 190 }">
+  <div class="logout-icon" (click)="onLogout()">
+    <mat-icon>logout</mat-icon>
+  </div>
+
+  <div class="dashboard-greeting">
+    <p class="greeting-date">{{ currentDate }}</p>
+    <p class="greeting-message">Good {{ greetingTime }}! <span class="username">{{ username }}</span>,</p>
+  </div>
+
+  <div *ngIf="showLogoutConfirm" class="confirm-dialog-backdrop">
+    <div class="confirm-dialog">
+      <h3 class="dialog-title">Confirm Logout</h3>
+      <p class="dialog-message">Are you sure you want to logout?</p>
+      <div class="dialog-buttons">
+        <button mat-raised-button color="primary" (click)="cancelLogout()">Cancel</button>
+        <button mat-raised-button color="warn" (click)="confirmLogout()">Yes, Logout</button>
+      </div>
+    </div>
+  </div>
+  <button mat-raised-button color="primary" class="create-task-button" (click)="showTaskForm = true">
+    <mat-icon class="button-icon">add_circle</mat-icon>
+    Create Task
+  </button>
+  
+  <mat-card class="blue-border card-box" appearance="outlined" (click)="goToUserDetails()">
+    <mat-card-content class="card-content text-center">
+      <div class="circle blue-circle"></div>
+      <div class="card-label">Total Users</div>
+      <div class="card-count">{{ totalUsers }}</div>
+    </mat-card-content>
+  </mat-card>
+  
+  <div *ngIf="showTaskForm" class="task-form-overlay">
+    <div class="task-form-box">
+      <h2 class="form-title">
+        New Task
+      </h2>
+      <div class="custom-form-group">
+        <label for="taskName">Task Name</label>
+        <input
+          type="text"
+          id="taskName"
+          [(ngModel)]="newTask.name"
+          class="custom-input"
+        />
+      </div>
+      <div class="custom-form-group">
+        <label for="description">Task</label>
+        <textarea
+          id="description"
+          [(ngModel)]="newTask.description"
+          rows="3"
+          class="custom-input"
+        ></textarea>
+      </div>
+      <div class="custom-form-group">
+        <label for="userName">Select User</label>
+        <select
+          id="userName"
+          [(ngModel)]="newTask.username"
+          class="custom-input"
+        >
+          <option value="" disabled selected>Select a user</option>
+          <option *ngFor="let user of users" [value]="user.username">{{ user.username }}</option>
+
+        </select>
+      </div>
+      
+      
+      <div class="button-row">
+        <button mat-flat-button color="primary" class="action-button save-button" (click)="createTask()">
+          Assign
+        </button>
+        
+     
+
+        <button mat-stroked-button color="warn" class="action-button cancel-button" (click)="showTaskForm = false">
+          Cancel
+        </button>
+      </div>
+      
+    </div>
+  </div>
+  </div>

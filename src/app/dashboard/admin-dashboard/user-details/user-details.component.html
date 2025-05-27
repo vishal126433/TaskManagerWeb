@@ -1,0 +1,77 @@
+<app-left-menu (collapsedChange)="isCollapsed = $event"></app-left-menu>
+
+<div [ngStyle]="{ 'margin-left.px': isCollapsed ? 75 : 190 }">
+<div (click)="onBack()" style="cursor: pointer; margin-left: 1.5rem; margin-top: 1rem;">
+    <svg  fill="#000000" stroke-width="0" viewBox="0 0 512 512" height="35px" width="35px" xmlns="http://www.w3.org/2000/svg"><path d="M216.4 163.7c5.1 5 5.1 13.3.1 18.4L155.8 243h231.3c7.1 0 12.9 5.8 12.9 13s-5.8 13-12.9 13H155.8l60.8 60.9c5 5.1 4.9 13.3-.1 18.4-5.1 5-13.2 5-18.3-.1l-82.4-83c-1.1-1.2-2-2.5-2.7-4.1-.7-1.6-1-3.3-1-5 0-3.4 1.3-6.6 3.7-9.1l82.4-83c4.9-5.2 13.1-5.3 18.2-.3z"></path></svg>
+ </div>
+<button mat-raised-button color="primary" class="create-task-button" (click)="toggleTaskForm()">
+    <mat-icon class="button-icon">add_circle</mat-icon>
+    Create Users
+  </button>
+  
+  <table class="task-table">
+    <thead>
+      <tr>
+        <th>Username</th>
+        <th>Email</th>
+        <th>Role</th>
+        <th>Password</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let task of tasks">
+        <td>{{ task.username }}</td>
+        <td>{{ task.email }}</td>
+        <td>{{ task.role }}</td>
+        <td>{{ task.passwordHash }}</td>
+
+        <td>
+          <button mat-icon-button [matMenuTriggerFor]="menu">
+            <mat-icon>more_vert</mat-icon>
+          </button>
+          <mat-menu #menu="matMenu">
+            <button mat-menu-item (click)="onView(task)">View</button>
+            <button mat-menu-item (click)="onEdit(task)">Edit</button>
+            <button mat-menu-item (click)="onDelete(task)">Delete</button>
+          </mat-menu>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  
+  <div *ngIf="showTaskForm" class="task-form-overlay">
+    <div class="task-form-box">
+      <h2 class="form-title">
+        {{ isViewMode ? 'View Task' : isEditMode ? 'Edit Task' : 'New Task' }}
+      </h2>
+      <div class="custom-form-group">
+        <label for="Username">Username</label>
+        <input type="text" id="Username" [(ngModel)]="newUser.Username" class="custom-input" [readonly]="isViewMode" />
+      </div>
+  
+      <div class="custom-form-group">
+        <label for="Email">Email</label>
+        <textarea id="Email" [(ngModel)]="newUser.Email" rows="3" class="custom-input" [readonly]="isViewMode"></textarea>
+      </div>
+
+      <div class="custom-form-group">
+        <label for="Role">Role</label>
+        <textarea id="Role" [(ngModel)]="newUser.Role" class="custom-input" [readonly]="isViewMode"></textarea>
+      </div>
+
+      <div class="custom-form-group">
+        <label for="passwordHash">Password</label>
+        <textarea id="passwordHash" [(ngModel)]="newUser.passwordHash" class="custom-input" [readonly]="isViewMode"></textarea>
+      </div>
+      <div class="form-actions">
+        <button mat-raised-button color="primary" (click)="isEditMode ? saveEditedTask() : createTask()">
+          {{ isEditMode ? 'Update' : 'Create' }}
+        </button>
+        <button mat-stroked-button color="warn" (click)="resetForm()">Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+  

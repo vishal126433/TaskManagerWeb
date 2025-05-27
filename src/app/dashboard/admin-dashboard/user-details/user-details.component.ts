@@ -100,7 +100,12 @@ export class UserDetailsComponent {
   }
   
 
-
+  
+  onTaskList(userId: number) {
+    this.router.navigate(['dashboard/admin-dashboard/task-list', userId]);
+  }
+  
+  
 
 
 

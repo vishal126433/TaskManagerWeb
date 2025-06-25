@@ -2,7 +2,10 @@ import { Component } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
 import { Router } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
-import { AuthService } from '../../auth.service';
+import { TaskService } from '../../services/task.service';
+import { UserService } from '../../services/user.service';
+import { MatTabsModule } from '@angular/material/tabs';
+import { AuthService } from '../../services/auth.service';
 import { CommonModule } from '@angular/common';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -20,6 +23,7 @@ import { FormsModule } from '@angular/forms';
     MatCardModule,
     MatIconModule,
     CommonModule,
+    MatTabsModule,
     HttpClientModule,
     LeftMenuComponent,
     FormsModule,
@@ -42,10 +46,13 @@ export class AdminDashboardComponent {
   newTask = {
     name: '',
     description: '',
-    status: 'pending',
+    status: 'new',
+    Duedate: '',
     username:''
 
   };
+  Message = ''; 
+  isSuccessMessage: boolean = false;
   usernames: string[] = [];
   username: string = '';
   currentDate: string = '';
@@ -58,6 +65,8 @@ users: any[] = [];  // add this to your component class
   selectedUser: string = '';
   constructor(
     private router: Router,
+    private taskService: TaskService,
+    private userService: UserService,
     private authService: AuthService,
     private http: HttpClient
   ) {
@@ -76,8 +85,9 @@ users: any[] = [];  // add this to your component class
     if (hour < 12) this.greetingTime = 'Morning';
     else if (hour < 18) this.greetingTime = 'Afternoon';
     else this.greetingTime = 'Evening';
+    this.userService.getUsers().subscribe({
 
-    this.http.get<any[]>('https://localhost:7129/users').subscribe({
+    // this.http.get<any[]>('https://localhost:7129/users').subscribe({
       next: (res: any[]) => {
         this.users=res;
         this.usernames = res.map(u => u.username);
@@ -90,7 +100,7 @@ users: any[] = [];  // add this to your component class
     });
   }
   extractUsernameFromToken(): void {
-    const token = sessionStorage.getItem('authToken'); // or localStorage
+    const token = sessionStorage.getItem('authToken'); 
     if (token) {
       try {
         const payload = JSON.parse(atob(token.split('.')[1]));
@@ -139,26 +149,51 @@ users: any[] = [];  // add this to your component class
       alert('Task name is required');
       return;
     }
-
-    const selectedUser = this.users.find(u => u.username === this.newTask.username);
   
+    const selectedUser = this.users.find(u => u.username === this.newTask.username);
     if (!selectedUser) {
       console.error('Selected username not found');
       return;
     }
   
     const userId = selectedUser.id;
-    this.http.post(`https://localhost:7129/Tasks/create/${userId}`, this.newTask).subscribe({
+    this.taskService.createTask(userId, this.newTask).subscribe({
       next: (res: any) => {
         console.log('Task created successfully:', res);
-        this.newTask = { name: '', description: '', status: 'pending', username: '' };
+        this.newTask = { name: '', description: '', status: 'new', Duedate: '',username: '' };
         this.showTaskForm = false;
       },
       error: (err: any) => {
         console.error('Error creating task:', err);
       }
     });
-    
-    
   }
+  onFileUpload(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files.length > 0) {
+      const file = input.files[0];
+      const formData = new FormData();
+      formData.append('file', file);
+  
+      this.http.post('https://localhost:7129/tasks/upload', formData).subscribe({
+        next: (res: any) => {
+          this.Message = "file uploaded successfully";
+          this.isSuccessMessage = true;
+          setTimeout(() => {
+            this.Message = '';
+          }, 5000);
+          console.log('Upload success:', res);
+        },
+        error: (err: any) => {
+          this.Message = "file upload failed";
+          this.isSuccessMessage = false;
+          setTimeout(() => {
+            this.Message = '';
+          }, 5000);
+        }
+      });
+    }
+  }
+  
+  
 }

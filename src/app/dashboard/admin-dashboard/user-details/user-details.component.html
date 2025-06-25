@@ -1,4 +1,7 @@
 <app-left-menu (collapsedChange)="isCollapsed = $event"></app-left-menu>
+<div class="error-toast" *ngIf="Message" [ngClass]="isSuccessMessage ? 'success' : 'error'">
+  {{ Message }}
+</div>
 
 <div [ngStyle]="{ 'margin-left.px': isCollapsed ? 75 : 190 }">
 <div (click)="onBack()" style="cursor: pointer; margin-left: 1.5rem; margin-top: 1rem;">
@@ -14,8 +17,8 @@
       <tr>
         <th>Username</th>
         <th>Email</th>
-        <th>Role</th>
-        <th>Password</th>
+        <!-- <th>Role</th>
+        <th>Password</th> -->
         <th>Actions</th>
       </tr>
     </thead>
@@ -23,8 +26,8 @@
       <tr *ngFor="let task of tasks">
         <td>{{ task.username }}</td>
         <td>{{ task.email }}</td>
-        <td>{{ task.role }}</td>
-        <td>{{ task.passwordHash }}</td>
+        <!-- <td>{{ task.role }}</td>
+        <td>{{ task.passwordHash }}</td> -->
 
         <td>
           <button mat-icon-button [matMenuTriggerFor]="menu">
@@ -45,7 +48,7 @@
   <div *ngIf="showTaskForm" class="task-form-overlay">
     <div class="task-form-box">
       <h2 class="form-title">
-        {{ isViewMode ? 'View Task' : isEditMode ? 'Edit Task' : 'New Task' }}
+        {{ isViewMode ? 'View User' : isEditMode ? 'Edit User' : 'New User' }}
       </h2>
       <div class="custom-form-group">
         <label for="Username">Username</label>
@@ -57,17 +60,17 @@
         <textarea id="Email" [(ngModel)]="newUser.Email" rows="3" class="custom-input" [readonly]="isViewMode"></textarea>
       </div>
 
-      <div class="custom-form-group">
+      <!-- <div class="custom-form-group">
         <label for="Role">Role</label>
         <textarea id="Role" [(ngModel)]="newUser.Role" class="custom-input" [readonly]="isViewMode"></textarea>
-      </div>
+      </div> -->
 
       <div class="custom-form-group">
-        <label for="passwordHash">Password</label>
-        <textarea id="passwordHash" [(ngModel)]="newUser.passwordHash" class="custom-input" [readonly]="isViewMode"></textarea>
+        <label for="password">Password</label>
+        <textarea id="password" [(ngModel)]="newUser.password" class="custom-input" [readonly]="isViewMode"></textarea>
       </div>
       <div class="form-actions">
-        <button mat-raised-button color="primary" (click)="isEditMode ? saveEditedTask() : createTask()">
+        <button mat-raised-button color="primary" (click)="isEditMode ? saveEditedUser() : createUser()">
           {{ isEditMode ? 'Update' : 'Create' }}
         </button>
         <button mat-stroked-button color="warn" (click)="resetForm()">Cancel</button>

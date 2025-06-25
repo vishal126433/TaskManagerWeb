@@ -1,4 +1,9 @@
 <app-left-menu (collapsedChange)="isCollapsed = $event"></app-left-menu>
+<div class="error-toast" *ngIf="Message" [ngClass]="isSuccessMessage ? 'success' : 'error'">
+    {{ Message }}
+</div>
+
+
 
 <div [ngStyle]="{ 'margin-left.px': isCollapsed ? 75 : 190 }">
 <div class="logout-icon" (click)="onLogout()">
@@ -30,12 +35,21 @@
     </mat-card-content>
   </mat-card>
 
+  <mat-card class="card-box due">
+    <mat-card-content>
+      <div class="label">
+        <svg  fill="#6c757d" stroke-width="0" viewBox="0 0 512 512" height="24px" width="24px" class="icon1" xmlns="http://www.w3.org/2000/svg"><path d="M256 0a256 256 0 1 1 0 512A256 256 0 1 1 256 0zM232 120l0 136c0 8 4 15.5 10.7 20l96 64c11 7.4 25.9 4.4 33.3-6.7s4.4-25.9-6.7-33.3L280 243.2 280 120c0-13.3-10.7-24-24-24s-24 10.7-24 24z"></path></svg>
+        In Progress Tasks</div>
+      <div class="count">{{ pendingCount }}</div>
+    </mat-card-content>
+  </mat-card>
+
   <mat-card class="card-box pending">
     <mat-card-content>
       <div class="label">
-        <svg  fill="#ff9800" stroke-width="0" viewBox="0 0 512 512" height="24px" width="24px" class="icon1" xmlns="http://www.w3.org/2000/svg"><path d="M256 0a256 256 0 1 1 0 512A256 256 0 1 1 256 0zM232 120l0 136c0 8 4 15.5 10.7 20l96 64c11 7.4 25.9 4.4 33.3-6.7s4.4-25.9-6.7-33.3L280 243.2 280 120c0-13.3-10.7-24-24-24s-24 10.7-24 24z"></path></svg>
-        Pending Tasks</div>
-      <div class="count">{{ pendingCount }}</div>
+        <svg  fill="#2976aa" stroke-width="0" viewBox="0 0 24 24" height="29px" width="29px" xmlns="http://www.w3.org/2000/svg"><path d="M12 22c1.1 0 2-.9 2-2h-4a2 2 0 0 0 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"></path></svg>
+        New Tasks</div>
+      <div class="count">{{ newCount }}</div>
     </mat-card-content>
   </mat-card>
 
@@ -60,6 +74,7 @@
     <tr>
       <th>Name</th>
       <th>Description</th>
+      <th>Due date</th>
       <th>Status</th>
       <th>Actions</th>
     </tr>
@@ -68,8 +83,13 @@
     <tr *ngFor="let task of tasks">
       <td>{{ task.name }}</td>
       <td>{{ task.description }}</td>
+      <td>{{ task.duedate | date: 'yyyy-MM-dd'  }}</td>
       <td>
-        <span [ngClass]="task.status === 'completed' ? 'status-completed' : 'status-pending'">
+        <span [ngClass]="{
+          'status-completed': task.status === 'completed',
+          'status-new': task.status === 'new',
+          'status-pending': task.status === 'in progress'
+        }">
           {{ task.status }}
         </span>
       </td>
@@ -101,6 +121,23 @@
       <label for="description">Description</label>
       <textarea id="description" [(ngModel)]="newTask.description" rows="3" class="custom-input" [readonly]="isViewMode"></textarea>
     </div>
+    <div class="custom-form-group">
+      <label for="Duedate">Due date</label>
+      <input
+        type="date"
+        id="Duedate"
+        [(ngModel)]="newTask.Duedate"
+        class="custom-input"
+        [readonly]="isViewMode"
+      />
+    </div>
+    <div class="custom-form-group">
+      <label for="types">Type</label>
+      <select id="type" [(ngModel)]="newTask.type" class="custom-input" [disabled]="isViewMode">
+        <option *ngFor="let type of types" [value]="type">{{ type | titlecase }}</option>
+      </select>
+    </div>
+    
 
     <div class="custom-form-group">
       <label for="status">Status</label>

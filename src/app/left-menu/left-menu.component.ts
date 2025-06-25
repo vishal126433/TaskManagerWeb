@@ -1,6 +1,8 @@
 import { MatIconModule } from '@angular/material/icon'; 
 import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
+
 import { Component, Output, EventEmitter } from '@angular/core';
 
 
@@ -20,6 +22,10 @@ import { Component, Output, EventEmitter } from '@angular/core';
 
 export class LeftMenuComponent {
   isCollapsed = false;
+  constructor(
+    private router: Router,
+  ) {}
+
   
 
  
@@ -30,4 +36,11 @@ export class LeftMenuComponent {
     this.isCollapsed = !this.isCollapsed;
     this.collapsedChange.emit(this.isCollapsed);
   }
+
+  onProfile(){
+    this.router.navigate(['/profile']);
+
+  }
+
+
 }

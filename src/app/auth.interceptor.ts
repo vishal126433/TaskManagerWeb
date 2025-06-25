@@ -1,6 +1,6 @@
 import { HttpInterceptorFn, HttpErrorResponse } from '@angular/common/http';
 import { inject } from '@angular/core';
-import { AuthService } from './auth.service';
+import { AuthService } from './services/auth.service';
 import { catchError, switchMap, throwError } from 'rxjs';
 
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
@@ -24,7 +24,6 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
         return authService.refreshToken().pipe(
           switchMap((newToken: string | null) => {
             if (!newToken) return throwError(() => err);
-
             sessionStorage.setItem('authToken', newToken);
             const retryReq = req.clone({
               setHeaders: { Authorization: `Bearer ${newToken}` },

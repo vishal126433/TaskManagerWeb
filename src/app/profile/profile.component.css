@@ -1,0 +1,21 @@
+.icon-wrapper {
+    height: 80px;
+    width: 80px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #f5f4f4, #e6e6e6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: auto;
+    margin-top: 5vh;
+  }
+  
+  .username {
+    text-align: center;
+    font-weight: 600;
+    font-size: 22px;
+    color: #2563eb;
+    margin-top: 12px;
+    font-family: 'Segoe UI', sans-serif;
+  }
+  

@@ -2,15 +2,15 @@ import { createRequire } from 'module';const require = createRequire(import.meta
 import {
   _CdkPrivateStyleLoader,
   _bindEventWithOptions
-} from "./chunk-V7TFIRXE.js";
-import {
-  BidiModule
-} from "./chunk-S3XSZVGM.js";
+} from "./chunk-BHYOZDSN.js";
 import {
   Platform,
   coerceElement,
   coerceNumberProperty
 } from "./chunk-7JHWDOFZ.js";
+import {
+  BidiModule
+} from "./chunk-S3XSZVGM.js";
 import {
   DOCUMENT
 } from "./chunk-KJYX7JCN.js";
@@ -3143,11 +3143,13 @@ export {
   _getEventTarget,
   normalizePassiveListenerOptions,
   FocusMonitor,
+  CdkMonitorFocus,
   coerceArray,
+  CdkObserveContent,
   ObserversModule,
   _IdGenerator,
   hasModifierKey,
   FocusKeyManager,
   MatCommonModule
 };
-//# sourceMappingURL=chunk-2SQFDVBM.js.map
+//# sourceMappingURL=chunk-5NTXVTNP.js.map

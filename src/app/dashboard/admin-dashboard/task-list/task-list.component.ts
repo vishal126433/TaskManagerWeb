@@ -1,11 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-
-
 import { MatCardModule } from '@angular/material/card';
 import { Router } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
-import { AuthService } from '../../../auth.service';
+import { AuthService } from '../../../services/auth.service';
+import { TaskService } from '../../../services/task.service';
 import { CommonModule } from '@angular/common';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -13,7 +12,6 @@ import { MatInputModule } from '@angular/material/input';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatButtonModule } from '@angular/material/button';
 import { LeftMenuComponent } from '../../../left-menu/left-menu.component';
-
 import { FormsModule } from '@angular/forms';
 
 @Component({
@@ -40,6 +38,8 @@ export class TaskListComponent implements OnInit {
   constructor(private route: ActivatedRoute,
     private router: Router,
     private authService: AuthService,
+    private taskService: TaskService,
+
     private http: HttpClient) {
     const now = new Date();
 
@@ -48,6 +48,7 @@ export class TaskListComponent implements OnInit {
     day: 'numeric',
     month: 'long'
   };
+  
   this.currentDate = now.toLocaleDateString('en-US', options);
 
   // Determine greeting
@@ -72,8 +73,10 @@ export class TaskListComponent implements OnInit {
   isViewMode = false;
   username: string = '';
   currentDate: string = '';
-greetingTime: string = '';
-isCollapsed: boolean = false;
+  greetingTime: string = '';
+  isCollapsed: boolean = false;
+  Message = ''; 
+  isSuccessMessage: boolean = false;
 
   toggleSidebar() {
     this.isCollapsed = !this.isCollapsed;
@@ -84,7 +87,8 @@ isCollapsed: boolean = false;
     id: 0,
     name: '',
     description: '',
-    status: 'pending'
+    Duedate: '',
+    status: 'new'
   };
 
   tasks: any[] = [];
@@ -103,6 +107,7 @@ getStatuses(): void {
 }
 completedCount: number = 0;
 pendingCount: number = 0;
+newCount: number = 0;
 totalCount: number = 0;
 
 getTasks(): void {
@@ -112,13 +117,15 @@ getTasks(): void {
     console.error('User ID not found in token');
     return;
   }
+  this.taskService.getTasks(userId.toString()).subscribe({
 
-  this.http.get<any[]>(`https://localhost:7129/Tasks/${userId}`).subscribe({
+  // this.http.get<any[]>(`https://localhost:7129/Tasks/${userId}`).subscribe({
     next: (res: any[]) => {
       this.tasks = res;
       this.totalCount = res.length;
       this.completedCount = res.filter(task => task.status.toLowerCase() === 'completed').length;
-      this.pendingCount = res.filter(task => task.status.toLowerCase() === 'pending').length;
+      this.pendingCount = res.filter(task => task.status.toLowerCase() === 'in progress').length;
+      this.newCount = res.filter(task => task.status.toLowerCase() === 'new').length;
     },
     error: (err: any) => {
       console.error('Error fetching tasks:', err);
@@ -133,8 +140,9 @@ getUserNameById(): void {
     console.error('User ID not found in token');
     return;
   }
+  this.taskService.getTaskss().subscribe({
 
-  this.http.get<any[]>('https://localhost:7129/Users').subscribe({
+  // this.http.get<any[]>('https://localhost:7129/Users').subscribe({
     next: (users: any[]) => {
       const user = users.find(u => u.id === Number(userId));
       if (user) {
@@ -165,14 +173,27 @@ getUserNameById(): void {
   }
 
   saveEditedTask(): void {
-    this.http.put(`https://localhost:7129/Tasks/${this.newTask.id}`, this.newTask).subscribe({
+
+    this.taskService.saveEditedTask(this.newTask).subscribe({
+
+    // this.http.put(`https://localhost:7129/Tasks/${this.newTask.id}`, this.newTask).subscribe({
       next: () => {
         console.log('Task updated successfully');
+        this.Message = "Task updated successfully";
+        this.isSuccessMessage = true;
         this.resetForm();
         this.getTasks();
+        setTimeout(() => {
+          this.Message = '';
+        }, 5000);
       },
       error: (err: any) => {
+        this.Message = "Task update failed";
+        this.isSuccessMessage = false;
         console.error('Error updating task:', err);
+        setTimeout(() => {
+          this.Message = '';
+        }, 5000);
       }
     });
   }
@@ -180,13 +201,26 @@ getUserNameById(): void {
   onDelete(task: any): void {
     const confirmed = confirm(`Are you sure you want to delete the task "${task.name}"?`);
     if (confirmed) {
-      this.http.delete(`https://localhost:7129/Tasks/${task.id}`).subscribe({
+      this.taskService.onDelete(task).subscribe({
+
+      // this.http.delete(`https://localhost:7129/Tasks/${task.id}`).subscribe({
         next: () => {
           console.log('Task deleted successfully');
+          this.Message = "Task deleted successfully";
+        this.isSuccessMessage = true;
           this.getTasks();
+          setTimeout(() => {
+            this.Message = '';
+          }, 5000);
         },
         error: (err: any) => {
           console.error('Error deleting task:', err);
+          this.Message = "Task deletion fails";
+          this.isSuccessMessage = false;
+          
+          setTimeout(() => {
+            this.Message = '';
+          }, 5000);
         }
       });
     }
@@ -204,21 +238,32 @@ getUserNameById(): void {
       console.error('User ID not found in token');
       return;
     }
-  
-    this.http.post(`https://localhost:7129/Tasks/create/${userId}`, this.newTask).subscribe({
+    this.taskService.createTask(userId.toString(),this.newTask).subscribe({
+
+    // this.http.post(`https://localhost:7129/Tasks/create/${userId}`, this.newTask).subscribe({
       next: (res: any) => {
         console.log('Task created successfully:', res);
+        this.Message = "Task created successfully";
+        this.isSuccessMessage = true;
         this.resetForm();
         this.getTasks();
+        setTimeout(() => {
+          this.Message = '';
+        }, 5000);
       },
       error: (err: any) => {
         console.error('Error creating task:', err);
+        this.Message = "Task creation fails";
+        this.isSuccessMessage = false;
+        setTimeout(() => {
+          this.Message = '';
+        }, 5000);
       }
     });
   }
   
   resetForm(): void {
-    this.newTask = { id: 0, name: '', description: '', status: 'pending' };
+    this.newTask = { id: 0, name: '', description: '',Duedate: '', status: 'new' };
     this.isEditMode = false;
     this.showTaskForm = false;
     this.isViewMode = false;

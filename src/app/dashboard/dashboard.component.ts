@@ -1,21 +1,13 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
-
-// Angular material & common
 import { CommonModule } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-
-// Forms
 import { FormsModule } from '@angular/forms';
-
-// Services
-import { AuthService } from '../auth.service';
-
-// Child components
+import { AuthService } from '../services/auth.service';
 import { AdminDashboardComponent } from './admin-dashboard/admin-dashboard.component';
 import { UserDashboardComponent } from './user-dashboard/user-dashboard.component';
 
@@ -23,7 +15,7 @@ import { UserDashboardComponent } from './user-dashboard/user-dashboard.componen
   selector: 'app-dashboard',
   standalone: true,
   templateUrl: './dashboard.component.html',
-  styleUrls: ['./dashboard.component.css'], // Fix: should be plural `styleUrls`
+  styleUrls: ['./dashboard.component.css'], 
   imports: [
     CommonModule,
     FormsModule,
@@ -47,10 +39,10 @@ export class DashboardComponent {
     private authService: AuthService,
     private http: HttpClient
   ) {
-        this.extractUsernameFromToken();
+        this.extractRoleFromToken();
 
   }
-  extractUsernameFromToken(): void {
+  extractRoleFromToken(): void {
     const token = sessionStorage.getItem('authToken'); // or localStorage
     if (token) {
       try {
@@ -61,9 +53,6 @@ export class DashboardComponent {
       }
     }
   }
-
- 
-
 
  
 }

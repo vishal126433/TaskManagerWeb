@@ -364,7 +364,7 @@
   background-color: #f0f5ff;
 }
 
-.status-pending, .status-inprogress, .status-completed {
+.status-pending, .status-new, .status-completed {
   padding: 6px 14px;
   font-size: 0.875rem;
   border-radius: 10px;
@@ -378,15 +378,15 @@
 }
 
 .status-pending {
-  background: linear-gradient(135deg, #f2994a);
+  background: linear-gradient(135deg, #6c757d);
 }
 
-.status-inprogress {
-  background: linear-gradient(135deg, #357ABD);
+.status-new{
+  background: linear-gradient(135deg,  #2976aa);
 }
 
 .status-completed {
-  background: linear-gradient(135deg, #27ae60);
+  background: linear-gradient(135deg, #28a745);
 }
 
 
@@ -445,7 +445,10 @@
 }
 
 .pending {
-  border: 3px solid #ff9800;
+  border: 3px solid  #2976aa;
+}
+.due {
+  border: 3px solid #6c757d;
 }
 
 .total {
@@ -472,15 +475,32 @@
 .username {
   color: #2563eb; /* Tailwind Blue-600 */
 }
-/* app-left-menu {
+
+.error-toast {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 50%;    
-  height: 60px;   
-  z-index: 1000; 
-  background-color: #fff;
-} */
+  top: 16px;
+  right: 16px;
+  z-index: 1000;
+  border-radius: 6px;
+  padding: 18px 30px;
+  max-width: 240px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.4;
+  color: white;
+  background-color: #4caf50;
+  opacity: 0.95;
+  display: flex;
+  align-items: center;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
 
 
+.error-toast.success {
+  background-color: #4caf50;
+}
 
+.error-toast.error {
+  background-color: #f44336;
+}

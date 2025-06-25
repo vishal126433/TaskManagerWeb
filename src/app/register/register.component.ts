@@ -5,8 +5,10 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms'; 
 import { Router } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
+import { AuthService } from '../services/auth.service';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
+
 import { MatButtonModule } from '@angular/material/button';
 
 @Component({
@@ -35,12 +37,31 @@ export class RegisterComponent {
 
   constructor(
     private http: HttpClient,
-    private router: Router
+    private router: Router,
+    private authService: AuthService
+
   ) {}
 
   onRegister() {
-    const url = 'https://localhost:7129/Users/register';
+    this.authService.register(this.loginData).subscribe({
+      next: (response: string) => {
+        console.log('Register successful:', response);
+        this.Message = response;
+        this.isSuccessMessage = true;
   
+        setTimeout(() => {
+          this.Message = '';
+          this.router.navigate(['/']);
+        }, 3000);
+      },
+      error: (error: { error: { message: string; }; }) => {
+        console.error('Registration error:', error);
+        this.Message = error.error?.message || 'Registration failed. Please try again.';
+        this.isSuccessMessage = false;
+  
+        setTimeout(() => this.Message = '', 3000);
+      }
+    });
     if (!this.loginData.email || !this.loginData.email.includes('@')) {
       this.Message = 'Please enter a valid email address';
       this.isSuccessMessage = false;
@@ -59,25 +80,8 @@ export class RegisterComponent {
       return;
     }
   
-    this.http.post(url, this.loginData, { responseType: 'text' }).subscribe(
-      (response: string) => {
-        console.log('Register successful:', response);
-        this.Message = response;
-        this.isSuccessMessage = true;
   
-        setTimeout(() => {
-          this.Message = '';
-          this.router.navigate(['/']);
-        }, 3000);
-      },
-      (error: { error: { message: string; }; }) => {
-        console.error('Registration error:', error);
-        this.Message = error.error?.message || 'Registration failed. Please try again.';
-        this.isSuccessMessage = false;
-  
-        setTimeout(() => this.Message = '', 3000);
-      }
-    );
   }
+  
 
 }

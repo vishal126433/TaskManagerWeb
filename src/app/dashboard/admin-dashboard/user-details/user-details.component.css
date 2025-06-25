@@ -389,3 +389,34 @@
 .status-completed {
   background: linear-gradient(135deg, #27ae60, #2ecc71);
 }
+
+
+.error-toast {
+  position: fixed;
+  top: 16px;
+  right: 16px;
+  z-index: 1000;
+  border-radius: 6px;
+  padding: 18px 30px;
+  max-width: 240px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.4;
+  color: white;
+  background-color: #4caf50;
+  opacity: 0.95;
+  display: flex;
+  align-items: center;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+
+.error-toast.success {
+  background-color: #4caf50;
+}
+
+.error-toast.error {
+  background-color: #f44336;
+}
+

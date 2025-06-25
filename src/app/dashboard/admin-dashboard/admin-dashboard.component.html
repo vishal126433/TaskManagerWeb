@@ -1,6 +1,8 @@
 
   <app-left-menu (collapsedChange)="isCollapsed = $event"></app-left-menu>
-
+  <div class="error-toast" *ngIf="Message" [ngClass]="isSuccessMessage ? 'success' : 'error'">
+    {{ Message }}
+</div>
   <div [ngStyle]="{ 'margin-left.px': isCollapsed ? 75 : 190 }">
   <div class="logout-icon" (click)="onLogout()">
     <mat-icon>logout</mat-icon>
@@ -21,18 +23,35 @@
       </div>
     </div>
   </div>
-  <button mat-raised-button color="primary" class="create-task-button" (click)="showTaskForm = true">
-    <mat-icon class="button-icon">add_circle</mat-icon>
-    Create Task
-  </button>
+ 
+  <mat-tab-group>
+    <mat-tab label="User">
+      <div class="p-4">
+        <mat-card class="blue-border card-box" appearance="outlined" (click)="goToUserDetails()">
+          <mat-card-content class="card-content text-center">
+            <div class="circle blue-circle"></div>
+            <div class="card-label">Total Users</div>
+            <div class="card-count">{{ totalUsers }}</div>
+          </mat-card-content>
+        </mat-card>
+      </div>
+    </mat-tab>
   
-  <mat-card class="blue-border card-box" appearance="outlined" (click)="goToUserDetails()">
-    <mat-card-content class="card-content text-center">
-      <div class="circle blue-circle"></div>
-      <div class="card-label">Total Users</div>
-      <div class="card-count">{{ totalUsers }}</div>
-    </mat-card-content>
-  </mat-card>
+    <mat-tab label="Task">
+      <div class="p-4">
+        <button mat-raised-button color="primary" class="create-task-button" (click)="showTaskForm = true">
+          <mat-icon class="button-icon">add_circle</mat-icon>
+          Create Task
+        </button>
+      </div>
+      <div style="margin-top: 15px; margin-left: 15px;">
+        <button (click)="fileInput.click()" style="padding: 10px 20px; background-color: rgb(0, 125, 209); color: white; border: none; border-radius: 5px; cursor: pointer;">
+          Upload File
+        </button>
+        <input #fileInput type="file" (change)="onFileUpload($event)" accept=".xlsx, .xls, .csv" style="display: none;" />
+      </div>
+    </mat-tab>
+  </mat-tab-group>
   
   <div *ngIf="showTaskForm" class="task-form-overlay">
     <div class="task-form-box">
@@ -57,8 +76,20 @@
           class="custom-input"
         ></textarea>
       </div>
+
+     
       <div class="custom-form-group">
-        <label for="userName">Select User</label>
+        <label for="Duedate">Due date</label>
+        <input
+          type="date"
+          id="Duedate"
+          [(ngModel)]="newTask.Duedate"
+          class="custom-input"
+        />
+      </div>
+
+      <div class="custom-form-group">
+        <label for="userName">Assign to</label>
         <select
           id="userName"
           [(ngModel)]="newTask.username"
@@ -70,14 +101,11 @@
         </select>
       </div>
       
-      
       <div class="button-row">
         <button mat-flat-button color="primary" class="action-button save-button" (click)="createTask()">
-          Assign
+          Save
         </button>
         
-     
-
         <button mat-stroked-button color="warn" class="action-button cancel-button" (click)="showTaskForm = false">
           Cancel
         </button>

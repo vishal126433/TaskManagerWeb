@@ -2,8 +2,8 @@ import { Component } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
 import { Router } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
-import { AuthService } from '../../../auth.service';
-
+import { AuthService } from '../../../services/auth.service';
+import { UserService } from '../../../services/user.service';
 import { CommonModule } from '@angular/common';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -40,14 +40,16 @@ export class UserDetailsComponent {
   toggleSidebar() {
     this.isCollapsed = !this.isCollapsed;
   }
+  Message = ''; 
+  isSuccessMessage: boolean = false;
 
 
   newUser = {
     id: 0,
     Username: '',
     Email: '',
-    Role: '',
-    passwordHash:''
+    Role: 'User',
+    password:''
   };
 
   tasks: any[] = [];
@@ -55,13 +57,17 @@ export class UserDetailsComponent {
   constructor(
     private router: Router,
     private authService: AuthService,
+    private userService: UserService,
+
     private http: HttpClient
   ) {
-    this.getTasks();
+    this.getUsers();
   }
 
-  getTasks(): void {
-    this.http.get<any[]>('https://localhost:7129/Users').subscribe({
+  getUsers(): void {
+    this.userService.getUsers().subscribe({
+
+    // this.http.get<any[]>('https://localhost:7129/Users').subscribe({
       next: (res: any[]) => {
         this.tasks = res;
         console.log('Tasks:', this.tasks);
@@ -79,7 +85,7 @@ export class UserDetailsComponent {
       Username: task.username,
       Email: task.email,
       Role: task.role,
-      passwordHash: task.passwordHash  
+      password: task.password  
     };
     this.isViewMode = true;
     this.isEditMode = false;
@@ -92,7 +98,7 @@ export class UserDetailsComponent {
       Username: task.username,
       Email: task.email,
       Role: task.role,
-      passwordHash: task.passwordHash 
+      password: task.password 
     };
     this.isEditMode = true;
     this.isViewMode = false;
@@ -109,54 +115,91 @@ export class UserDetailsComponent {
 
 
 
-  saveEditedTask(): void {
-    this.http.put(`https://localhost:7129/Users/${this.newUser.id}`, this.newUser).subscribe({
+  saveEditedUser(): void {
+    this.userService.saveEditedUser(this.newUser).subscribe({
+
+    // this.http.put(`https://localhost:7129/Users/${this.newUser.id}`, this.newUser).subscribe({
       next: () => {
         console.log('Task updated successfully');
         this.resetForm();
-        this.getTasks();
+        this.getUsers();
+        this.Message = "Task updated successfully";
+        this.isSuccessMessage = true;
+        setTimeout(() => {
+          this.Message = '';
+        }, 5000);
       },
       error: (err: any) => {
         console.error('Error updating task:', err);
+        this.Message = "Task updation failed";
+        this.isSuccessMessage = false;
+        setTimeout(() => {
+          this.Message = '';
+        }, 5000);
       }
     });
   }
 
-  onDelete(task: any): void {
-    const confirmed = confirm(`Are you sure you want to delete the task "${task.name}"?`);
+  onDelete(user: any): void {
+    const confirmed = confirm(`Are you sure you want to delete the user`);
     if (confirmed) {
-      this.http.delete(`https://localhost:7129/Users/${task.id}`).subscribe({
+      this.userService.onDelete(user.id).subscribe({
+
+
+      // this.http.delete(`https://localhost:7129/Users/${task.id}`).subscribe({
         next: () => {
+          this.Message = "deleted successfully";
+          this.isSuccessMessage = true;
           console.log('Task deleted successfully');
-          this.getTasks();
+          this.getUsers();
+          setTimeout(() => {
+            this.Message = '';
+          }, 5000);
         },
         error: (err: any) => {
           console.error('Error deleting task:', err);
+          this.Message = "deletion fails";
+          this.isSuccessMessage = false;
+          setTimeout(() => {
+            this.Message = '';
+          }, 5000);
         }
       });
     }
   }
 
-  createTask(): void {
+  createUser(): void {
     if (!this.newUser.Username.trim()) {
       alert('Task name is required');
       return;
     }
+    this.userService.createUser(this.newUser).subscribe({
 
-    this.http.post('https://localhost:7129/Users/create', this.newUser).subscribe({
+
+    // this.http.post('https://localhost:7129/Users/create', this.newUser).subscribe({
       next: (res: any) => {
         console.log('Task created successfully:', res);
         this.resetForm();
-        this.getTasks();
+        this.getUsers();
+        this.Message = "Task created successfully";
+          this.isSuccessMessage = true;
+        setTimeout(() => {
+          this.Message = '';
+        }, 5000);
       },
       error: (err: any) => {
         console.error('Error creating task:', err);
+        this.Message = "Task creation fails";
+          this.isSuccessMessage = false;
+        setTimeout(() => {
+          this.Message = '';
+        }, 5000);
       }
     });
   }
 
   resetForm(): void {
-    this.newUser = { id: 0, Username: '', Email: '', Role: '',passwordHash: ''};
+    this.newUser = { id: 0, Username: '', Email: '', Role: '',password: ''};
     this.isEditMode = false;
     this.showTaskForm = false;
     this.isViewMode = false;

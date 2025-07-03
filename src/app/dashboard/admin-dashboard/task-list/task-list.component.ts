@@ -63,6 +63,7 @@ export class TaskListComponent implements OnInit {
     this.userId = this.route.snapshot.paramMap.get('userId');
     this.getTasks();
     this.getStatuses();
+    this.getTypes();
     this.getUserNameById();
 
     console.log('User ID:', this.userId);
@@ -88,11 +89,14 @@ export class TaskListComponent implements OnInit {
     name: '',
     description: '',
     Duedate: '',
+    type: 'general',
     status: 'new'
   };
 
   tasks: any[] = [];
   statuses: string[] = [];
+  types: string[] = [];
+
 
 getStatuses(): void {
   this.http.get<string[]>('https://localhost:7129/Tasks/statuslist').subscribe({
@@ -102,6 +106,17 @@ getStatuses(): void {
     },
     error: (err: any) => {
       console.error('Error fetching statuses:', err);
+    }
+  });
+}
+getTypes(): void {
+  this.taskService.getTypes().subscribe({
+    next: (res: string[]) => {
+      this.types = res;
+      console.log('Types:', this.types);
+    },
+    error: (err: any) => {
+      console.error('Error fetching types:', err);
     }
   });
 }
@@ -263,7 +278,7 @@ getUserNameById(): void {
   }
   
   resetForm(): void {
-    this.newTask = { id: 0, name: '', description: '',Duedate: '', status: 'new' };
+    this.newTask = { id: 0, name: '', description: '',Duedate: '', type: 'general', status: 'new' };
     this.isEditMode = false;
     this.showTaskForm = false;
     this.isViewMode = false;

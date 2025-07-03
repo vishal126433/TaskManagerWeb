@@ -41,26 +41,27 @@ export class LoginComponent {
 
   onLogin() {
     this.authService.login(this.loginData).subscribe({
-      next: (response: { accessToken: string; role: string; }) => {
+      next: (response: { accessToken: string; }) => {
         console.log('Login successful:', response);
         sessionStorage.setItem('authToken', response.accessToken);
-        sessionStorage.setItem('userRole', response.role);
-  
         this.authService.scheduleRefresh(response.accessToken);
         localStorage.setItem('isLoggedIn', 'true');
         this.router.navigate(['/dashboard']);
         this.errorMessage = '';
       },
-      error: (error: { status: number; }) => {
+      error: (error: any) => {
         console.error('Login failed:', error);
-        this.errorMessage = error.status === 401
-          ? 'Invalid username or password.'
-          : 'Login failed. Please try again later.';
-  
+        // Show backend message if exists
+        if (error.error.message && error.error) {
+          this.errorMessage = error.error.message;
+        } else {
+          this.errorMessage = 'Login failed. Please try again later.';
+        }
         setTimeout(() => this.errorMessage = '', 3000);
       }
     });
   }
+  
   
 
   onSign() {

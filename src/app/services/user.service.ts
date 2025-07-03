@@ -48,9 +48,10 @@ getUsers(): Observable<any[]> {
     return this.http.delete<any>(url);
   }
   
-
-
-
+  deactivateUser(userId: number): Observable<any> {
+    const url = `${this.baseUrl}/Users/toggle-active/${userId}`;
+    return this.http.post<any>(url, {});
+  }
   
 
  

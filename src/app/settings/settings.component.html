@@ -1,0 +1,32 @@
+
+<app-left-menu (collapsedChange)="isCollapsed = $event"></app-left-menu>
+
+<div [ngStyle]="{ 'margin-left.px': isCollapsed ? 65 : 165 }">
+
+    <mat-card class="main-card">
+        <mat-card-title class="card-title">Change Password</mat-card-title>
+        <mat-card-content>
+          <div class="stat-card">
+            <div class="custom-input-field">
+                <label for="oldPassword">Old Password</label>
+                <input id="oldPassword" type="password" [(ngModel)]="oldPassword">
+              </div>
+            <div class="custom-input-field">
+              <label for="newPassword">New Password</label>
+              <input id="newPassword" type="password" [(ngModel)]="newPassword">
+            </div>
+      
+            <div class="custom-input-field">
+              <label for="confirmPassword">Confirm Password</label>
+              <input id="confirmPassword" type="password" [(ngModel)]="confirmPassword">
+            </div>
+            <div class="button-group">
+                <button (click)="changePassword()">Save</button>
+                <button (click)="clearFields()">Clear</button>
+              </div>
+              
+          </div>
+        </mat-card-content>
+      </mat-card>
+      
+</div>

@@ -49,7 +49,7 @@ export class UserDetailsComponent {
     Username: '',
     Email: '',
     Role: 'User',
-    password:''
+    password:'',
   };
 
   tasks: any[] = [];
@@ -167,6 +167,32 @@ export class UserDetailsComponent {
       });
     }
   }
+onDeactivate(user: any) {
+  const confirmText = user.isActive
+    ? `Are you sure you want to deactivate user: ${user.username}?`
+    : `Are you sure you want to activate user: ${user.username}?`;
+
+  if (confirm(confirmText)) {
+    this.userService.deactivateUser(user.id).subscribe(
+      () => {
+        // Toggle isActive status locally
+        user.isActive = !user.isActive;
+
+        this.Message = user.isActive
+          ? 'User activated successfully'
+          : 'User deactivated successfully';
+
+        this.isSuccessMessage = true;
+      },
+      () => {
+        this.Message = 'Error changing user status';
+        this.isSuccessMessage = false;
+      }
+    );
+  }
+}
+
+  
 
   createUser(): void {
     if (!this.newUser.Username.trim()) {

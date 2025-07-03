@@ -36,7 +36,11 @@ getUsers(): Observable<any[]> {
     const url = `${this.baseUrl}/Tasks/${userId}`;
     return this.http.get<any[]>(url);
   }
-
+  getTasksss(pageNumber: number, pageSize: number) {
+    const url = `${this.baseUrl}/Tasks?pageNumber=${pageNumber}&pageSize=${pageSize}`;
+    return this.http.get<{ totalCount: number, tasks: any[] }>(url);
+  }
+  
   getTaskss(): Observable<any[]> {
     const url = `${this.baseUrl}/Users`;
     return this.http.get<any[]>(url);
@@ -49,6 +53,16 @@ getUsers(): Observable<any[]> {
     const url = `${this.baseUrl}/Tasks/typelist`;
     return this.http.get<string[]>(url);
   }
+  searchTasks(userId: string, query: string) {
+    const url = `${this.baseUrl}/Tasks/search?userId=${userId}&query=${encodeURIComponent(query)}`;
+    return this.http.get<any[]>(url);
+  }
+  searchTaskss(query: string) {
+    const url = `${this.baseUrl}/Tasks/searchTasks?query=${encodeURIComponent(query)}`;
+    return this.http.get<any[]>(url);
+  }
+  
+  
   
   
 

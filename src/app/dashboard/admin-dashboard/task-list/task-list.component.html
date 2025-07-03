@@ -2,7 +2,7 @@
 <div class="error-toast" *ngIf="Message" [ngClass]="isSuccessMessage ? 'success' : 'error'">
   {{ Message }}
 </div>
-<div [ngStyle]="{ 'margin-left.px': isCollapsed ? 75 : 190 }">
+<div [ngStyle]="{ 'margin-left.px': isCollapsed ? 65 : 165 }">
 <div class="logout-icon" (click)="onLogout()">
   <mat-icon>logout</mat-icon>
 </div>
@@ -125,7 +125,13 @@
         class="custom-input"
         [readonly]="isViewMode"
       />
-      
+    </div>
+
+    <div class="custom-form-group">
+      <label for="types">Type</label>
+      <select id="type" [(ngModel)]="newTask.type" class="custom-input" [disabled]="isViewMode">
+        <option *ngFor="let type of types" [value]="type">{{ type | titlecase }}</option>
+      </select>
     </div>
 
     <div class="custom-form-group">

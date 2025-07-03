@@ -419,4 +419,19 @@
 .error-toast.error {
   background-color: #f44336;
 }
+::ng-deep .custom-task-menu .mat-menu-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 500;
+}
+
+::ng-deep .custom-task-menu .mat-icon {
+  font-size: 20px;
+}
+.inactive-row {
+  background-color: #cccccc;     /* solid light gray */
+  color: #c0c0c0;                /* darker gray text */
+  opacity: 0.9;                  /* slight fade effect */
+}
 

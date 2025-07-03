@@ -1,52 +1,91 @@
 .sidebar {
-    width: 160px;
-    transition: width 0.3s ease;
-    background-color: #ffffff;
-    height: 100vh;
-    position: fixed;
-    left: 0;
-    top: 0;
-    padding: 1rem;
-    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
-    overflow: hidden;
-  }
-  
-  .sidebar.collapsed {
-    width: 45px;
-  }
-  
-  .toggle-button {
-    background: none;
-    border: none;
-    cursor: pointer;
-    margin-left: auto;
-    display: block;
-    margin-bottom: 2rem;
-  }
-  
-  .menu {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-  }
-  
-  .menu-item {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 20px;
-    padding: 10px;
-    border-radius: 6px;
-    transition: background-color 0.2s;
-    cursor: pointer;
-  }
-  
-  .menu-item:hover {
-    background-color: #f0f0f0;
-  }
-  
-  .label {
-    font-size: 16px;
-    color: #333;
-  }
-  
+  width: 160px;
+  transition: width 0.3s ease;
+  background-color: #f5f7fb; 
+  height: 100vh;
+  position: fixed;
+  left: 0;
+  top: 0;
+  padding-top: 1rem;
+  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.05);
+  overflow-x: hidden;
+  overflow-y: auto;
+  z-index: 1000;
+}
+
+.sidebar.collapsed {
+  width: 55px;
+}
+
+.toggle-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  margin-bottom: 1rem;
+  color: #444;
+  transition: margin-left 0.3s ease;
+}
+
+.sidebar:not(.collapsed) .toggle-button {
+  margin-left: 60px;
+}
+
+.menu {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.menu-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 8px 5px;
+  padding: 10px;
+  border-radius: 6px;
+  transition: background-color 0.2s ease;
+  cursor: pointer;
+  color: #333;
+  font-weight: 500;
+}
+
+.menu-item mat-icon {
+  font-size: 22px;
+  min-width: 24px;
+  text-align: center;
+  color: #444;
+}
+
+.menu-item:hover {
+  background-color: #e0ecff;
+  color: #003c80;
+}
+
+.menu-item:hover mat-icon {
+  color: #003c80;
+}
+
+.label {
+  font-size: 15px;
+  color: #333;
+  white-space: nowrap;
+  transition: opacity 0.2s ease;
+}
+
+.sidebar.collapsed .label {
+  opacity: 0;
+  width: 0;
+  overflow: hidden;
+}
+.menu-item.active {
+  background-color: #d0e2ff; /* active background */
+  color: #003c80;            /* active text color */
+}
+
+.menu-item.active mat-icon {
+  color: #003c80;           /* active icon color */
+}

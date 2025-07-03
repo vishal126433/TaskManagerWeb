@@ -5,7 +5,7 @@
 
 
 
-<div [ngStyle]="{ 'margin-left.px': isCollapsed ? 75 : 190 }">
+<div [ngStyle]="{ 'margin-left.px': isCollapsed ? 65 : 165 }">
 <div class="logout-icon" (click)="onLogout()">
   <mat-icon>logout</mat-icon>
 </div>
@@ -63,11 +63,29 @@
   </mat-card>
 </div>
 
+<div class="search-create-wrapper">
+  <div class="search-card">
+    <div class="search-input-container">
+      <mat-icon class="search-icon">search</mat-icon>
+      <input
+        type="text"
+        [(ngModel)]="searchText"
+        (input)="onSearchChange(searchText)"
+        placeholder="Search by task name or description"
+        class="custom-inputs"
+      />
+      <button *ngIf="searchText" class="clear-btn" (click)="clearSearch()">
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
+  </div>
 
-<button mat-raised-button color="primary" class="create-task-button" (click)="toggleTaskForm()">
-  <mat-icon class="button-icon">add_circle</mat-icon>
-  Create Task
-</button>
+  <button mat-raised-button color="primary" class="custom-create-btn" (click)="toggleTaskForm()">
+    <mat-icon class="button-icon">add_circle</mat-icon>
+    Create Task
+  </button>
+</div>
+
 
 <table class="task-table">
   <thead>
@@ -97,11 +115,21 @@
         <button mat-icon-button [matMenuTriggerFor]="menu">
           <mat-icon>more_vert</mat-icon>
         </button>
-        <mat-menu #menu="matMenu">
-          <button mat-menu-item (click)="onView(task)">View</button>
-          <button mat-menu-item (click)="onEdit(task)">Edit</button>
-          <button mat-menu-item (click)="onDelete(task)">Delete</button>
+        <mat-menu #menu="matMenu" class="custom-task-menu">
+          <button mat-menu-item (click)="onView(task)">
+            <mat-icon color="primary">visibility</mat-icon>
+            <span>View</span>
+          </button>
+          <button mat-menu-item (click)="onEdit(task)">
+            <mat-icon color="accent">edit</mat-icon>
+            <span>Edit</span>
+          </button>
+          <button mat-menu-item (click)="onDelete(task)">
+            <mat-icon color="warn">delete</mat-icon>
+            <span>Delete</span>
+          </button>
         </mat-menu>
+        
       </td>
     </tr>
   </tbody>

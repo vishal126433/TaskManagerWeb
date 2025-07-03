@@ -1,9 +1,8 @@
-
-  <app-left-menu (collapsedChange)="isCollapsed = $event"></app-left-menu>
+<app-left-menu (collapsedChange)="isCollapsed = $event"></app-left-menu>
   <div class="error-toast" *ngIf="Message" [ngClass]="isSuccessMessage ? 'success' : 'error'">
     {{ Message }}
 </div>
-  <div [ngStyle]="{ 'margin-left.px': isCollapsed ? 75 : 190 }">
+  <div [ngStyle]="{ 'margin-left.px': isCollapsed ? 65 : 165 }">
   <div class="logout-icon" (click)="onLogout()">
     <mat-icon>logout</mat-icon>
   </div>
@@ -23,94 +22,243 @@
       </div>
     </div>
   </div>
- 
-  <mat-tab-group>
-    <mat-tab label="User">
-      <div class="p-4">
-        <mat-card class="blue-border card-box" appearance="outlined" (click)="goToUserDetails()">
-          <mat-card-content class="card-content text-center">
-            <div class="circle blue-circle"></div>
-            <div class="card-label">Total Users</div>
-            <div class="card-count">{{ totalUsers }}</div>
+  <div class="fancy-tab-wrapper">
+    <div class="tab-switcher">
+      <div 
+        class="tab" 
+        [class.active]="selectedTab === 'user'" 
+        (click)="selectedTab = 'user'">
+        <mat-icon>person</mat-icon>
+        <span>User</span>
+      </div>
+      <div 
+        class="tab" 
+        [class.active]="selectedTab === 'task'" 
+        (click)="selectedTab = 'task'">
+        <mat-icon>assignment</mat-icon>
+        <span>Task</span>
+      </div>
+      <div class="tab-slider" [style.left]="selectedTab === 'user' ? '0%' : '50%'"></div>
+    </div>
+    
+  
+    <div class="fancy-tab-content">
+      <!-- USER TAB -->
+      <div *ngIf="selectedTab === 'user'">
+        <mat-card class="main-card">
+          <mat-card-title class="card-title">User Overview</mat-card-title>
+          <mat-card-content>
+            <div class="stat-card" (click)="goToUserDetails()">
+              <div class="stat-icon blue-circle">
+                <mat-icon>person</mat-icon>
+              </div>
+              <div>
+                <div class="stat-label">Total Users</div>
+                <div class="stat-value">{{ totalUsers }}</div>
+              </div>
+            </div>
           </mat-card-content>
         </mat-card>
       </div>
-    </mat-tab>
   
-    <mat-tab label="Task">
-      <div class="p-4">
-        <button mat-raised-button color="primary" class="create-task-button" (click)="showTaskForm = true">
-          <mat-icon class="button-icon">add_circle</mat-icon>
-          Create Task
-        </button>
-      </div>
-      <div style="margin-top: 15px; margin-left: 15px;">
-        <button (click)="fileInput.click()" style="padding: 10px 20px; background-color: rgb(0, 125, 209); color: white; border: none; border-radius: 5px; cursor: pointer;">
-          Upload File
-        </button>
-        <input #fileInput type="file" (change)="onFileUpload($event)" accept=".xlsx, .xls, .csv" style="display: none;" />
-      </div>
-    </mat-tab>
-  </mat-tab-group>
-  
-  <div *ngIf="showTaskForm" class="task-form-overlay">
-    <div class="task-form-box">
-      <h2 class="form-title">
-        New Task
-      </h2>
-      <div class="custom-form-group">
-        <label for="taskName">Task Name</label>
-        <input
-          type="text"
-          id="taskName"
-          [(ngModel)]="newTask.name"
-          class="custom-input"
-        />
-      </div>
-      <div class="custom-form-group">
-        <label for="description">Task</label>
-        <textarea
-          id="description"
-          [(ngModel)]="newTask.description"
-          rows="3"
-          class="custom-input"
-        ></textarea>
-      </div>
+      <!-- TASK TAB -->
+      <div *ngIf="selectedTab === 'task'">
+        <mat-card class="main-card">
+          <mat-card-title class="card-title">Manage Tasks</mat-card-title>
+          <mat-card-content>
+            <div class="card-container">
+              <mat-card class="card-box completed">
+                <mat-card-content>
+                  <div class="label"><svg  fill=" #4caf50" stroke-width="0" viewBox="0 0 24 24" height="30px" width="30px" class="icon1" xmlns="http://www.w3.org/2000/svg"><path fill="none" d="M0 0h24v24H0z"></path><path d="m23 12-2.44-2.79.34-3.69-3.61-.82-1.89-3.2L12 2.96 8.6 1.5 6.71 4.69 3.1 5.5l.34 3.7L1 12l2.44 2.79-.34 3.7 3.61.82L8.6 22.5l3.4-1.47 3.4 1.46 1.89-3.19 3.61-.82-.34-3.69L23 12zm-12.91 4.72-3.8-3.81 1.48-1.48 2.32 2.33 5.85-5.87 1.48 1.48-7.33 7.35z"></path></svg>
+                    Completed Tasks</div>
+                  <div class="count">{{ completedCount }}</div>
+                </mat-card-content>
+              </mat-card>
+            
+              <mat-card class="card-box due">
+                <mat-card-content>
+                  <div class="label">
+                    <svg  fill="#6c757d" stroke-width="0" viewBox="0 0 512 512" height="24px" width="24px" class="icon1" xmlns="http://www.w3.org/2000/svg"><path d="M256 0a256 256 0 1 1 0 512A256 256 0 1 1 256 0zM232 120l0 136c0 8 4 15.5 10.7 20l96 64c11 7.4 25.9 4.4 33.3-6.7s4.4-25.9-6.7-33.3L280 243.2 280 120c0-13.3-10.7-24-24-24s-24 10.7-24 24z"></path></svg>
+                    In Progress Tasks</div>
+                  <div class="count">{{ pendingCount }}</div>
+                </mat-card-content>
+              </mat-card>
+            
+              <mat-card class="card-box pending">
+                <mat-card-content>
+                  <div class="label">
+                    <svg  fill="#2976aa" stroke-width="0" viewBox="0 0 24 24" height="29px" width="29px" xmlns="http://www.w3.org/2000/svg"><path d="M12 22c1.1 0 2-.9 2-2h-4a2 2 0 0 0 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"></path></svg>
+                    New Tasks</div>
+                  <div class="count">{{ newCount }}</div>
+                </mat-card-content>
+              </mat-card>
+            
+              <mat-card class="card-box total">
+                <mat-card-content>
+                  <div class="label">
+                    <svg  fill="#2196f3" stroke-width="0" viewBox="0 0 32 32" height="27px" width="27px"  class="icon1" xmlns="http://www.w3.org/2000/svg"><path d="M 10.28125 5.28125 L 7 8.5625 L 5.71875 7.28125 L 4.28125 8.71875 L 6.28125 10.71875 L 7 11.40625 L 7.71875 10.71875 L 11.71875 6.71875 Z M 15 7 L 15 9 L 28 9 L 28 7 Z M 10.28125 13.28125 L 7 16.5625 L 5.71875 15.28125 L 4.28125 16.71875 L 6.28125 18.71875 L 7 19.40625 L 7.71875 18.71875 L 11.71875 14.71875 Z M 15 15 L 15 17 L 28 17 L 28 15 Z M 10.28125 21.28125 L 7 24.5625 L 5.71875 23.28125 L 4.28125 24.71875 L 6.28125 26.71875 L 7 27.40625 L 7.71875 26.71875 L 11.71875 22.71875 Z M 15 23 L 15 25 L 28 25 L 28 23 Z"></path></svg>
+                    Total Tasks</div>
+                  <div class="count">{{ totalCount }}</div>
+                </mat-card-content>
+              </mat-card>
+            </div>
 
-     
-      <div class="custom-form-group">
-        <label for="Duedate">Due date</label>
-        <input
-          type="date"
-          id="Duedate"
-          [(ngModel)]="newTask.Duedate"
-          class="custom-input"
-        />
-      </div>
+            <div class="search-create-wrapper">
+              <div class="search-card">
+                <div class="search-input-container">
+                  <mat-icon class="search-icon">search</mat-icon>
+                  <input
+                    type="text"
+                    [(ngModel)]="searchText"
+                    (input)="onSearchChange(searchText)"
+                    placeholder="Search by task name or description"
+                    class="custom-inputs"
+                  />
+                  <button *ngIf="searchText" class="clear-btn" (click)="clearSearch()">
+                    <mat-icon>close</mat-icon>
+                  </button>
+                </div>
+              </div>
+            
+              <button
+                mat-raised-button
+                color="primary"
+                class="create-task-button"
+                (click)="showTaskForm = true"
+              >
+                <mat-icon class="button-icon">add_circle</mat-icon>
+                Create Task
+              </button>
+            
+              <button (click)="fileInput.click()" class="upload-button">
+                <mat-icon class="upload-icon">cloud_upload</mat-icon>
+                Import Tasks
+              </button>
+            
+              <input
+                #fileInput
+                type="file"
+                (change)="onFileUpload($event)"
+                accept=".xlsx, .xls, .csv"
+                style="display: none"
+              />
+            </div>
 
-      <div class="custom-form-group">
-        <label for="userName">Assign to</label>
-        <select
-          id="userName"
-          [(ngModel)]="newTask.username"
-          class="custom-input"
-        >
-          <option value="" disabled selected>Select a user</option>
-          <option *ngFor="let user of users" [value]="user.username">{{ user.username }}</option>
 
-        </select>
+
+
+            
+            <table class="task-table">
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Description</th>
+                  <th>Due date</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let task of tasks">
+                  <td>{{ task.name }}</td>
+                  <td>{{ task.description }}</td>
+                  <td>{{ task.duedate | date: 'yyyy-MM-dd'  }}</td>
+                  <td>
+                    <span [ngClass]="{
+                      'status-completed': task.status === 'completed',
+                      'status-new': task.status === 'new',
+                      'status-pending': task.status === 'in progress'
+                    }">
+                      {{ task.status }}
+                    </span>
+                  </td>
+                  <td>
+                    <button mat-icon-button [matMenuTriggerFor]="menu">
+                      <mat-icon>more_vert</mat-icon>
+                    </button>
+                    <mat-menu #menu="matMenu" class="custom-task-menu">
+                      <button mat-menu-item (click)="onView(task)">
+                        <mat-icon color="primary">visibility</mat-icon>
+                        <span>View</span>
+                      </button>
+                      <button mat-menu-item (click)="onEdit(task)">
+                        <mat-icon color="accent">edit</mat-icon>
+                        <span>Edit</span>
+                      </button>
+                      <button mat-menu-item (click)="onDelete(task)">
+                        <mat-icon color="warn">delete</mat-icon>
+                        <span>Delete</span>
+                      </button>
+                    </mat-menu>
+                    
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            <div class="pagination-container">
+              <button class="pagination-btn" (click)="prevPage()" [disabled]="currentPage === 1">
+                <mat-icon>chevron_left</mat-icon>
+              </button>
+              <span class="page-number">Page {{ currentPage }}</span>
+              <button class="pagination-btn" (click)="nextPage()" [disabled]="currentPage * pageSize >= totalCount">
+                <mat-icon>chevron_right</mat-icon>
+              </button>
+            </div>
+            
+
+          </mat-card-content>
+        </mat-card>
       </div>
-      
-      <div class="button-row">
-        <button mat-flat-button color="primary" class="action-button save-button" (click)="createTask()">
-          Save
-        </button>
-        
-        <button mat-stroked-button color="warn" class="action-button cancel-button" (click)="showTaskForm = false">
-          Cancel
-        </button>
-      </div>
-      
     </div>
   </div>
+  
+  
+<div *ngIf="showTaskForm" class="task-form-overlay">
+  <div class="task-form-box">
+    <h2 class="form-title">
+      {{ isViewMode ? 'View Task' : isEditMode ? 'Edit Task' : 'New Task' }}
+    </h2>
+    <div class="custom-form-group">
+      <label for="taskName">Task Name</label>
+      <input type="text" id="taskName" [(ngModel)]="newTask.name" class="custom-input" [readonly]="isViewMode" />
+    </div>
+
+    <div class="custom-form-group">
+      <label for="description">Description</label>
+      <textarea id="description" [(ngModel)]="newTask.description" rows="3" class="custom-input" [readonly]="isViewMode"></textarea>
+    </div>
+    <div class="custom-form-group">
+      <label for="Duedate">Due date</label>
+      <input
+        type="date"
+        id="Duedate"
+        [(ngModel)]="newTask.Duedate"
+        class="custom-input"
+        [readonly]="isViewMode"
+      />
+    </div>
+    <div class="custom-form-group">
+      <label for="types">Type</label>
+      <select id="type" [(ngModel)]="newTask.type" class="custom-input" [disabled]="isViewMode">
+        <option *ngFor="let type of types" [value]="type">{{ type | titlecase }}</option>
+      </select>
+    </div>
+    
+
+    <div class="custom-form-group">
+      <label for="status">Status</label>
+      <select id="status" [(ngModel)]="newTask.status" class="custom-input" [disabled]="isViewMode">
+        <option *ngFor="let status of statuses" [value]="status">{{ status | titlecase }}</option>
+      </select>
+    </div>
+    
+
+    <div class="form-actions">
+      <button mat-raised-button color="primary" (click)="isEditMode ? saveEditedTask() : createTask()">
+        {{ isEditMode ? 'Update' : 'Create' }}
+      </button>
+      <button mat-stroked-button color="warn" (click)="resetForm()">Cancel</button>
+    </div>
+  </div>
+</div>
   </div>

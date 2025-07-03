@@ -12,8 +12,10 @@ import { MatInputModule } from '@angular/material/input';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatButtonModule } from '@angular/material/button';
 import { LeftMenuComponent } from '../../left-menu/left-menu.component';
-
 import { FormsModule } from '@angular/forms';
+
+import { Subject } from 'rxjs';
+import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 
 @Component({
   selector: 'user-dashboard',
@@ -35,21 +37,18 @@ import { FormsModule } from '@angular/forms';
 })
 export class UserDashboardComponent {
   showLogoutConfirm = false;
-  
   showTaskForm = false;
   isEditMode = false;
   isViewMode = false;
   username: string = '';
   currentDate: string = '';
-greetingTime: string = '';
-isCollapsed: boolean = false;
-
-  toggleSidebar() {
-    this.isCollapsed = !this.isCollapsed;
-  }
-  Message = ''; 
+  greetingTime: string = '';
+  isCollapsed: boolean = false;
+  Message = '';
   isSuccessMessage: boolean = false;
 
+  searchText: string = '';
+  private searchSubject = new Subject<string>();
 
   newTask = {
     id: 0,
@@ -61,42 +60,85 @@ isCollapsed: boolean = false;
   };
 
   tasks: any[] = [];
+  statuses: string[] = [];
+  types: string[] = [];
+
+  completedCount: number = 0;
+  pendingCount: number = 0;
+  newCount: number = 0;
+  totalCount: number = 0;
 
   constructor(
     private router: Router,
     private taskService: TaskService,
     private authService: AuthService,
-
     private http: HttpClient
   ) {
     this.extractUsernameFromToken();
-
     this.getTasks();
     this.getStatuses();
     this.getTypes();
+    this.setupSearchListener();
 
     const now = new Date();
+    const options: Intl.DateTimeFormatOptions = {
+      weekday: 'long',
+      day: 'numeric',
+      month: 'long'
+    };
+    this.currentDate = now.toLocaleDateString('en-US', options);
 
-  const options: Intl.DateTimeFormatOptions = {
-    weekday: 'long',
-    day: 'numeric',
-    month: 'long'
-  };
-  this.currentDate = now.toLocaleDateString('en-US', options);
-
-  // Determine greeting
-  const hour = now.getHours();
-  if (hour < 12) this.greetingTime = 'Morning';
-  else if (hour < 18) this.greetingTime = 'Afternoon';
-  else this.greetingTime = 'Evening';
-
+    const hour = now.getHours();
+    this.greetingTime = hour < 12 ? 'Morning' : hour < 18 ? 'Afternoon' : 'Evening';
   }
 
-  statuses: string[] = [];
-  types: string[] = [];
+  ngOnInit(): void {}
 
+  toggleSidebar() {
+    this.isCollapsed = !this.isCollapsed;
+  }
+
+  setupSearchListener(): void {
+    this.searchSubject.pipe(
+      debounceTime(900),
+      distinctUntilChanged()
+    ).subscribe((query: string) => this.fetchSearchedTasks(query));
+  }
+
+  onSearchChange(query: string): void {
+    this.searchSubject.next(query);
+  }
+
+  clearSearch(): void {
+    this.searchText = '';
+    this.getTasks(); // Reset to full list
+  }
+
+  fetchSearchedTasks(query: string): void {
+    const userId = this.extractUserIdFromToken();
+    if (!userId) return;
+  
+    const trimmedQuery = query.trim();
+  
+    if (!trimmedQuery) {
+      this.getTasks(); // If search box is empty, fetch all tasks
+      return;
+    }
+  
+    this.taskService.searchTasks(userId.toString(), trimmedQuery).subscribe({
+      next: (res: any[]) => {
+        this.tasks = res;
+        this.totalCount = res.length;
+        this.completedCount = res.filter(t => t.status.toLowerCase() === 'completed').length;
+        this.pendingCount = res.filter(t => t.status.toLowerCase() === 'in progress').length;
+        this.newCount = res.filter(t => t.status.toLowerCase() === 'new').length;
+      },
+      error: (err: any) => console.error('Search error:', err)
+    });
+  }
+  
   extractUsernameFromToken(): void {
-    const token = sessionStorage.getItem('authToken'); // or localStorage
+    const token = sessionStorage.getItem('authToken');
     if (token) {
       try {
         const payload = JSON.parse(atob(token.split('.')[1]));
@@ -106,6 +148,7 @@ isCollapsed: boolean = false;
       }
     }
   }
+
   extractUserIdFromToken(): number | null {
     const token = sessionStorage.getItem('authToken');
     if (token) {
@@ -120,184 +163,132 @@ isCollapsed: boolean = false;
     }
     return null;
   }
-  
 
   getStatuses(): void {
     this.taskService.getStatuses().subscribe({
-      next: (res: string[]) => {
-        this.statuses = res;
-        console.log('Statuses:', this.statuses);
-      },
-      error: (err: any) => {
-        console.error('Error fetching statuses:', err);
-      }
+      next: (res: string[]) => this.statuses = res,
+      error: (err: any) => console.error('Error fetching statuses:', err)
     });
   }
 
   getTypes(): void {
     this.taskService.getTypes().subscribe({
-      next: (res: string[]) => {
-        this.types = res;
-        console.log('Types:', this.types);
+      next: (res: string[]) => this.types = res,
+      error: (err: any) => console.error('Error fetching types:', err)
+    });
+  }
+
+  getTasks(): void {
+    const userId = this.extractUserIdFromToken();
+    if (!userId) {
+      console.error('User ID not found in token');
+      return;
+    }
+
+    this.taskService.getTasks(userId.toString()).subscribe({
+      next: (res: any[]) => {
+        this.tasks = res;
+        this.totalCount = res.length;
+        this.completedCount = res.filter(task => task.status.toLowerCase() === 'completed').length;
+        this.pendingCount = res.filter(task => task.status.toLowerCase() === 'in progress').length;
+        this.newCount = res.filter(task => task.status.toLowerCase() === 'new').length;
       },
       error: (err: any) => {
-        console.error('Error fetching types:', err);
+        console.error('Error fetching tasks:', err);
       }
     });
   }
-  
-
-
-completedCount: number = 0;
-pendingCount: number = 0;
-newCount: number = 0;
-totalCount: number = 0;
-
-getTasks(): void {
-  const userId = this.extractUserIdFromToken();
-
-  if (!userId) {
-    console.error('User ID not found in token');
-    return;
-  }
-
-  this.taskService.getTasks(userId.toString()).subscribe({
-    next: (res: any[]) => {
-      this.tasks = res;
-      this.totalCount = res.length;
-      this.completedCount = res.filter(task => task.status.toLowerCase() === 'completed').length;
-      this.pendingCount = res.filter(task => task.status.toLowerCase() === 'in progress').length;
-      this.newCount = res.filter(task => task.status.toLowerCase() === 'new').length;
-    },
-    error: (err: any) => {
-      console.error('Error fetching tasks:', err);
-    }
-  });
-}
-
-
 
   onView(task: any): void {
-    this.newTask = { ...task }; // load task to form
+    this.newTask = { ...task };
     this.isViewMode = true;
     this.isEditMode = false;
     this.showTaskForm = true;
   }
 
   onEdit(task: any): void {
-    this.newTask = { ...task }; // load task to form
-    
+    this.newTask = { ...task };
     this.isEditMode = true;
     this.showTaskForm = true;
     this.isViewMode = false;
-
   }
-
 
   onDelete(task: any): void {
     const confirmed = confirm(`Are you sure you want to delete the task "${task.name}"?`);
     if (confirmed) {
       this.taskService.onDelete(task).subscribe({
-      // this.http.delete(`https://localhost:7129/Tasks/${task.id}`).subscribe({
         next: () => {
           this.Message = "deleted successfully";
           this.isSuccessMessage = true;
-          console.log('Task deleted successfully');
           this.getTasks();
-          setTimeout(() => {
-            this.Message = '';
-          }, 5000);
+          setTimeout(() => this.Message = '', 5000);
         },
         error: (err: any) => {
           console.error('Error deleting task:', err);
-          this.Message = "deletion fails";
+          this.Message = "deletion failed";
           this.isSuccessMessage = false;
-          setTimeout(() => {
-            this.Message = '';
-          }, 5000);
+          setTimeout(() => this.Message = '', 5000);
         }
       });
     }
   }
 
   saveEditedTask(): void {
-   
     this.taskService.saveEditedTask(this.newTask).subscribe({
       next: () => {
         this.Message = "updated successfully";
-        console.log('Task updated successfully');
         this.isSuccessMessage = true;
-
         this.resetForm();
         this.getTasks();
-  
-        setTimeout(() => {
-          this.Message = '';
-        }, 5000);
+        setTimeout(() => this.Message = '', 5000);
       },
       error: (err: any) => {
         this.Message = "update failed";
         this.isSuccessMessage = false;
-
-        setTimeout(() => {
-          this.Message = '';
-        }, 5000);
+        setTimeout(() => this.Message = '', 5000);
       }
     });
   }
-  
-
 
   createTask(): void {
     if (!this.newTask.name.trim()) {
       alert('Task name is required');
       return;
     }
-    const userId = this.extractUserIdFromToken(); // Extract from JWT
-    if (!userId) {
-      console.error('User ID not found in token');
-      return;
-    }
-    this.taskService.createTask(userId.toString(),this.newTask).subscribe({
-      next: (res: any) => {
-        console.log('Task created successfully:', res);
-        this.resetForm();
-        this.getTasks();
+
+    const userId = this.extractUserIdFromToken();
+    if (!userId) return;
+
+    this.taskService.createTask(userId.toString(), this.newTask).subscribe({
+      next: () => {
         this.Message = "task created successfully";
         this.isSuccessMessage = true;
-
-        setTimeout(() => {
-          this.Message = '';
-        }, 5000);
+        this.resetForm();
+        this.getTasks();
+        setTimeout(() => this.Message = '', 5000);
       },
       error: (err: any) => {
         console.error('Error creating task:', err);
         this.Message = "task creation failed";
         this.isSuccessMessage = false;
-
-        setTimeout(() => {
-          this.Message = '';
-        }, 5000);
+        setTimeout(() => this.Message = '', 5000);
       }
     });
   }
-  
+
   resetForm(): void {
-    this.newTask = { id: 0, name: '', description: '',Duedate: '', type: 'general', status: 'new' };
+    this.newTask = { id: 0, name: '', description: '', Duedate: '', type: 'general', status: 'new' };
     this.isEditMode = false;
     this.showTaskForm = false;
     this.isViewMode = false;
-
   }
 
   toggleTaskForm(): void {
-    this.resetForm();              // Clear the form first
-    this.showTaskForm = true;     // Always show the form
-    this.isEditMode = false;      // Ensure we are in create mode
+    this.resetForm();
+    this.showTaskForm = true;
+    this.isEditMode = false;
   }
-  
 
-  // Logout logic
   onLogout(): void {
     this.showLogoutConfirm = true;
   }
@@ -309,7 +300,6 @@ getTasks(): void {
   confirmLogout(): void {
     this.authService.logout().subscribe({
       next: () => {
-        console.log('Logged out successfully');
         sessionStorage.removeItem('authToken');
         localStorage.removeItem('isLoggedIn');
         this.router.navigate(['/']);

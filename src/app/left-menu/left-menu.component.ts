@@ -22,6 +22,8 @@ import { Component, Output, EventEmitter } from '@angular/core';
 
 export class LeftMenuComponent {
   isCollapsed = false;
+  activeItem: string = '';  // default active item
+
   constructor(
     private router: Router,
   ) {}
@@ -41,6 +43,11 @@ export class LeftMenuComponent {
     this.router.navigate(['/profile']);
 
   }
+  onSettings(){
+    this.router.navigate(['/settings']);
+
+  }
+  
 
 
 }

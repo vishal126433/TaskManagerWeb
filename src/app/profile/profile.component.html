@@ -1,12 +1,35 @@
+<app-header></app-header>
 <app-left-menu (collapsedChange)="isCollapsed = $event"></app-left-menu>
 
-<div [ngStyle]="{ 'margin-left.px': isCollapsed ? 65 : 165 }">
-    <div class="icon-wrapper shadow-lg hover:shadow-xl transition duration-300 ease-in-out">
-        <svg fill="#2563eb" stroke-width="0" viewBox="0 0 448 512" height="30px" width="30px" xmlns="http://www.w3.org/2000/svg">
-          <path d="M224 256c70.7 0 128-57.3 128-128S294.7 0 224 0 96 57.3 96 128s57.3 128 128 128zm89.6 32h-16.7c-22.2 10.2-46.9 16-72.9 16s-50.6-5.8-72.9-16h-16.7C60.2 288 0 348.2 0 422.4V464c0 26.5 21.5 48 48 48h352c26.5 0 48-21.5 48-48v-41.6c0-74.2-60.2-134.4-134.4-134.4z"></path>
-        </svg>
+<div 
+  class="profile-page"
+  [ngStyle]="{
+    'margin-left.px': isCollapsed ? 58 : 163,
+    'margin-top.px': 80
+  }"
+>
+  <div class="profile-banner"></div>
+
+  <div class="profile-card">
+      <svg fill="#2563eb" stroke-width="0" viewBox="0 0 512 512" height="70px" width="70px" xmlns="http://www.w3.org/2000/svg">
+        <path d="M399 384.2C376.9 345.8 335.4 320 288 320l-64 0c-47.4 0-88.9 25.8-111 64.2c35.2 39.2 86.2 63.8 143 63.8s107.8-24.7 143-63.8zM0 256a256 256 0 1 1 512 0A256 256 0 1 1 0 256zm256 16a72 72 0 1 0 0-144 72 72 0 1 0 0 144z"></path>
+      </svg>
+    <div class="profile-info">
+      <h2 class="profile-name">{{ username }}</h2>
+    </div>
+    <div class="profile-stats">
+      <div class="stat">
+        <p class="stat-value">2</p>
+        <p class="stat-label">Pending</p>
       </div>
-      <p class="username">{{ username }}</p>
-      
-      
+      <div class="stat">
+        <p class="stat-value">12</p>
+        <p class="stat-label">Completed</p>
+      </div>
+      <div class="stat">
+        <p class="stat-value">14</p>
+        <p class="stat-label">Total</p>
+      </div>
+    </div>
+  </div>
 </div>

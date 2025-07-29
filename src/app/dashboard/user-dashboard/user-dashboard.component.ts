@@ -4,6 +4,8 @@ import { Router } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
 import { TaskService } from '../../services/task.service';
 import { AuthService } from '../../services/auth.service';
+import { HeaderComponent } from '../../header/header.component';
+
 
 import { CommonModule } from '@angular/common';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
@@ -30,7 +32,8 @@ import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
     LeftMenuComponent,
     FormsModule,
     MatFormFieldModule,
-    MatInputModule
+    MatInputModule,
+    HeaderComponent
   ],
   templateUrl: './user-dashboard.component.html',
   styleUrls: ['./user-dashboard.component.css']
@@ -56,12 +59,17 @@ export class UserDashboardComponent {
     description: '',
     Duedate: '',
     type: 'general',
-    status: 'new'
+    status: 'new',
+    priority:''
   };
 
   tasks: any[] = [];
   statuses: string[] = [];
+  priorities: string[] = [];
   types: string[] = [];
+  sortColumn: string = '';
+sortDirection: 'asc' | 'desc' = 'asc';
+  
 
   completedCount: number = 0;
   pendingCount: number = 0;
@@ -77,6 +85,7 @@ export class UserDashboardComponent {
     this.extractUsernameFromToken();
     this.getTasks();
     this.getStatuses();
+    this.getPriority();
     this.getTypes();
     this.setupSearchListener();
 
@@ -126,16 +135,18 @@ export class UserDashboardComponent {
     }
   
     this.taskService.searchTasks(userId.toString(), trimmedQuery).subscribe({
-      next: (res: any[]) => {
-        this.tasks = res;
-        this.totalCount = res.length;
-        this.completedCount = res.filter(t => t.status.toLowerCase() === 'completed').length;
-        this.pendingCount = res.filter(t => t.status.toLowerCase() === 'in progress').length;
-        this.newCount = res.filter(t => t.status.toLowerCase() === 'new').length;
+      next: (res: any) => {
+        const taskList = res.data;
+        this.tasks = taskList;
+        // this.totalCount = taskList.length;
+        // this.completedCount = taskList.filter((t: { status: string; }) => t.status.toLowerCase() === 'completed').length;
+        // this.pendingCount = taskList.filter((t: { status: string; }) => t.status.toLowerCase() === 'in progress').length;
+        // this.newCount = taskList.filter((t: { status: string; }) => t.status.toLowerCase() === 'new').length;
       },
       error: (err: any) => console.error('Search error:', err)
     });
   }
+  
   
   extractUsernameFromToken(): void {
     const token = sessionStorage.getItem('authToken');
@@ -166,39 +177,47 @@ export class UserDashboardComponent {
 
   getStatuses(): void {
     this.taskService.getStatuses().subscribe({
-      next: (res: string[]) => this.statuses = res,
+      next: (res: any) => this.statuses = res.data,
       error: (err: any) => console.error('Error fetching statuses:', err)
     });
   }
-
+  
+  getPriority(): void {
+    this.taskService.getPriority().subscribe({
+      next: (res: any) => this.priorities = res.data,
+      error: (err: any) => console.error('Error fetching priority:', err)
+    });
+  }
+  
   getTypes(): void {
     this.taskService.getTypes().subscribe({
-      next: (res: string[]) => this.types = res,
+      next: (res: any) => this.types = res.data,
       error: (err: any) => console.error('Error fetching types:', err)
     });
   }
-
+  
   getTasks(): void {
     const userId = this.extractUserIdFromToken();
     if (!userId) {
       console.error('User ID not found in token');
       return;
     }
-
+  
     this.taskService.getTasks(userId.toString()).subscribe({
-      next: (res: any[]) => {
-        this.tasks = res;
-        this.totalCount = res.length;
-        this.completedCount = res.filter(task => task.status.toLowerCase() === 'completed').length;
-        this.pendingCount = res.filter(task => task.status.toLowerCase() === 'in progress').length;
-        this.newCount = res.filter(task => task.status.toLowerCase() === 'new').length;
+      next: (res: any) => {
+        const taskList = res.data;
+        this.tasks = taskList;
+        this.totalCount = taskList.length;
+        this.completedCount = taskList.filter((task: { status: string; }) => task.status.toLowerCase() === 'completed').length;
+        this.pendingCount = taskList.filter((task: { status: string; }) => task.status.toLowerCase() === 'in progress').length;
+        this.newCount = taskList.filter((task: { status: string; }) => task.status.toLowerCase() === 'new').length;
       },
       error: (err: any) => {
         console.error('Error fetching tasks:', err);
       }
     });
   }
-
+  
   onView(task: any): void {
     this.newTask = { ...task };
     this.isViewMode = true;
@@ -231,6 +250,24 @@ export class UserDashboardComponent {
         }
       });
     }
+  }
+
+  sortData(column: string) {
+    if (this.sortColumn === column) {
+      this.sortDirection = this.sortDirection === 'asc' ? 'desc' : 'asc';
+    } else {
+      this.sortColumn = column;
+      this.sortDirection = 'asc';
+    }
+  
+    this.tasks.sort((a, b) => {
+      const valueA = a[column]?.toString().toLowerCase() || '';
+      const valueB = b[column]?.toString().toLowerCase() || '';
+  
+      if (valueA < valueB) return this.sortDirection === 'asc' ? -1 : 1;
+      if (valueA > valueB) return this.sortDirection === 'asc' ? 1 : -1;
+      return 0;
+    });
   }
 
   saveEditedTask(): void {
@@ -277,7 +314,7 @@ export class UserDashboardComponent {
   }
 
   resetForm(): void {
-    this.newTask = { id: 0, name: '', description: '', Duedate: '', type: 'general', status: 'new' };
+    this.newTask = { id: 0, name: '', description: '', Duedate: '', type: 'general', priority: '', status: 'new' };
     this.isEditMode = false;
     this.showTaskForm = false;
     this.isViewMode = false;

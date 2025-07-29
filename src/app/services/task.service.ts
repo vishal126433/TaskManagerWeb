@@ -38,8 +38,15 @@ getUsers(): Observable<any[]> {
   }
   getTasksss(pageNumber: number, pageSize: number) {
     const url = `${this.baseUrl}/Tasks?pageNumber=${pageNumber}&pageSize=${pageSize}`;
-    return this.http.get<{ totalCount: number, tasks: any[] }>(url);
+    return this.http.get<{
+      totalCount: number;
+      tasks: any[];
+      completedCount: number;
+      pendingCount: number;
+      newCount: number;
+    }>(url);
   }
+  
   
   getTaskss(): Observable<any[]> {
     const url = `${this.baseUrl}/Users`;
@@ -47,6 +54,10 @@ getUsers(): Observable<any[]> {
   }
   getStatuses(): Observable<string[]> {
     const url = `${this.baseUrl}/Tasks/statuslist`;
+    return this.http.get<string[]>(url);
+  }
+  getPriority(): Observable<string[]> {
+    const url = `${this.baseUrl}/Tasks/prioritylist`;
     return this.http.get<string[]>(url);
   }
   getTypes(): Observable<string[]> {
@@ -83,14 +94,18 @@ getUsers(): Observable<any[]> {
 
   refreshToken(): Observable<string> {
     return this.http.post<any>(`${this.baseUrl}/Users/refresh-token`, {}, { withCredentials: true }).pipe(
-      map((res: { accessToken: string }) => {
-        if (!res.accessToken) throw new Error('No access token received');
-
+      map((res: any) => {
+        const accessToken = res?.data?.accessToken;
+        
+        if (!accessToken || accessToken === '') {
+          console.error('Access token missing or empty in response:', res);
+          throw new Error('No access token received');
+        }  
         if (this.isBrowser()) {
-          sessionStorage.setItem('authToken', res.accessToken);
-          this.scheduleRefresh(res.accessToken);
+          sessionStorage.setItem('authToken', accessToken);
+          this.scheduleRefresh(accessToken);
         }
-        return res.accessToken;
+        return accessToken;
       }),
       catchError((err: any) => {
         console.error('Token refresh failed:', err);
@@ -99,6 +114,7 @@ getUsers(): Observable<any[]> {
       })
     );
   }
+  
 
   scheduleRefresh(_token: string): void {
     if (this.refreshTimer) clearInterval(this.refreshTimer);

@@ -11,6 +11,8 @@ import { MatInputModule } from '@angular/material/input';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatButtonModule } from '@angular/material/button';
 import { LeftMenuComponent } from '../../../left-menu/left-menu.component';
+import { HeaderComponent } from '../../../header/header.component';
+
 
 import { FormsModule } from '@angular/forms';
 @Component({
@@ -25,6 +27,7 @@ import { FormsModule } from '@angular/forms';
     HttpClientModule,
     LeftMenuComponent,
     FormsModule,
+    HeaderComponent,
     MatFormFieldModule,
     MatInputModule],
   templateUrl: './user-details.component.html',
@@ -36,6 +39,8 @@ export class UserDetailsComponent {
   isEditMode = false;
   isViewMode = false;
   isCollapsed: boolean = false;
+  sortColumn: string = '';
+sortDirection: 'asc' | 'desc' = 'asc';
 
   toggleSidebar() {
     this.isCollapsed = !this.isCollapsed;
@@ -66,10 +71,8 @@ export class UserDetailsComponent {
 
   getUsers(): void {
     this.userService.getUsers().subscribe({
-
-    // this.http.get<any[]>('https://localhost:7129/Users').subscribe({
-      next: (res: any[]) => {
-        this.tasks = res;
+      next: (res: any) => {
+        this.tasks = res.data;
         console.log('Tasks:', this.tasks);
       },
       error: (err: any) => {
@@ -77,6 +80,7 @@ export class UserDetailsComponent {
       }
     });
   }
+  
 
 
   onView(task: any): void {
@@ -183,10 +187,16 @@ onDeactivate(user: any) {
           : 'User deactivated successfully';
 
         this.isSuccessMessage = true;
+        setTimeout(() => {
+          this.Message = '';
+        }, 5000);
       },
       () => {
         this.Message = 'Error changing user status';
         this.isSuccessMessage = false;
+        setTimeout(() => {
+          this.Message = '';
+        }, 5000);
       }
     );
   }
@@ -221,6 +231,24 @@ onDeactivate(user: any) {
           this.Message = '';
         }, 5000);
       }
+    });
+  }
+
+  sortData(column: string) {
+    if (this.sortColumn === column) {
+      this.sortDirection = this.sortDirection === 'asc' ? 'desc' : 'asc';
+    } else {
+      this.sortColumn = column;
+      this.sortDirection = 'asc';
+    }
+  
+    this.tasks.sort((a, b) => {
+      const valueA = a[column]?.toString().toLowerCase() || '';
+      const valueB = b[column]?.toString().toLowerCase() || '';
+  
+      if (valueA < valueB) return this.sortDirection === 'asc' ? -1 : 1;
+      if (valueA > valueB) return this.sortDirection === 'asc' ? 1 : -1;
+      return 0;
     });
   }
 

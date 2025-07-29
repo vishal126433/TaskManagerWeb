@@ -1,32 +1,29 @@
-
+<app-header></app-header>
 <app-left-menu (collapsedChange)="isCollapsed = $event"></app-left-menu>
 
-<div [ngStyle]="{ 'margin-left.px': isCollapsed ? 65 : 165 }">
-
-    <mat-card class="main-card">
-        <mat-card-title class="card-title">Change Password</mat-card-title>
-        <mat-card-content>
-          <div class="stat-card">
-            <div class="custom-input-field">
-                <label for="oldPassword">Old Password</label>
-                <input id="oldPassword" type="password" [(ngModel)]="oldPassword">
-              </div>
-            <div class="custom-input-field">
-              <label for="newPassword">New Password</label>
-              <input id="newPassword" type="password" [(ngModel)]="newPassword">
-            </div>
-      
-            <div class="custom-input-field">
-              <label for="confirmPassword">Confirm Password</label>
-              <input id="confirmPassword" type="password" [(ngModel)]="confirmPassword">
-            </div>
-            <div class="button-group">
-                <button (click)="changePassword()">Save</button>
-                <button (click)="clearFields()">Clear</button>
-              </div>
-              
-          </div>
-        </mat-card-content>
-      </mat-card>
-      
+<div [ngStyle]="{
+  'margin-left.px': isCollapsed ? 58 : 163,
+  'margin-top.px': 90
+}" class="password-page">
+  <mat-card class="password-card">
+    <h2 class="password-title">Change Password</h2>
+    <div class="password-fields">
+      <div class="input-group">
+        <label for="oldPassword">Old Password</label>
+        <input id="oldPassword" type="password" [(ngModel)]="oldPassword" >
+      </div>
+      <div class="input-group">
+        <label for="newPassword">New Password</label>
+        <input id="newPassword" type="password" [(ngModel)]="newPassword" >
+      </div>
+      <div class="input-group">
+        <label for="confirmPassword">Confirm Password</label>
+        <input id="confirmPassword" type="password" [(ngModel)]="confirmPassword">
+      </div>
+    </div>
+    <div class="action-buttons">
+      <button class="btn-save" (click)="changePassword()">Save</button>
+      <button class="btn-clear" (click)="clearFields()">Clear</button>
+    </div>
+  </mat-card>
 </div>

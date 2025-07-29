@@ -9,12 +9,14 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatButtonModule } from '@angular/material/button';
+import { HeaderComponent } from '../header/header.component';
+
 import { FormsModule } from '@angular/forms';
 
 
 @Component({
   selector: 'app-settings',
-  imports: [FormsModule,LeftMenuComponent,MatButtonModule,MatMenuModule,MatInputModule,MatFormFieldModule,HttpClientModule,CommonModule,MatIconModule,MatCardModule],
+  imports: [FormsModule,LeftMenuComponent,MatButtonModule,HeaderComponent,MatMenuModule,MatInputModule,MatFormFieldModule,HttpClientModule,CommonModule,MatIconModule,MatCardModule],
   templateUrl: './settings.component.html',
   styleUrl: './settings.component.css'
 })

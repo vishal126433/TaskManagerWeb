@@ -1,11 +1,15 @@
+<app-header></app-header>
+
 <app-left-menu (collapsedChange)="isCollapsed = $event"></app-left-menu>
 <div class="error-toast" *ngIf="Message" [ngClass]="isSuccessMessage ? 'success' : 'error'">
   {{ Message }}
 </div>
-<div [ngStyle]="{ 'margin-left.px': isCollapsed ? 65 : 165 }">
-<div class="logout-icon" (click)="onLogout()">
-  <mat-icon>logout</mat-icon>
-</div>
+
+<div [ngStyle]="{ 
+  'margin-left.px': isCollapsed ? 58 : 163, 
+  'margin-top.px': 90
+}">
+ 
 <div class="dashboard-greeting">
   <p class="greeting-message">User Name: <span class="username">{{ username }}</span></p>
 </div>
@@ -24,38 +28,55 @@
 
 <div class="card-container">
   <mat-card class="card-box completed">
-    <mat-card-content>
-      <div class="label"><svg  fill=" #4caf50" stroke-width="0" viewBox="0 0 24 24" height="30px" width="30px" class="icon1" xmlns="http://www.w3.org/2000/svg"><path fill="none" d="M0 0h24v24H0z"></path><path d="m23 12-2.44-2.79.34-3.69-3.61-.82-1.89-3.2L12 2.96 8.6 1.5 6.71 4.69 3.1 5.5l.34 3.7L1 12l2.44 2.79-.34 3.7 3.61.82L8.6 22.5l3.4-1.47 3.4 1.46 1.89-3.19 3.61-.82-.34-3.69L23 12zm-12.91 4.72-3.8-3.81 1.48-1.48 2.32 2.33 5.85-5.87 1.48 1.48-7.33 7.35z"></path></svg>
-        Completed Tasks</div>
-      <div class="count">{{ completedCount }}</div>
+    <mat-card-content class="card-content-row">
+      <div class="label">
+        <svg fill="#4caf50" stroke-width="0" viewBox="0 0 24 24" height="30px" width="30px" class="icon1" xmlns="http://www.w3.org/2000/svg">
+          <path fill="none" d="M0 0h24v24H0z"></path>
+          <path d="m23 12-2.44-2.79.34-3.69-3.61-.82-1.89-3.2L12 2.96 8.6 1.5 6.71 4.69 3.1 5.5l.34 3.7L1 12l2.44 2.79-.34 3.7 3.61.82L8.6 22.5l3.4-1.47 3.4 1.46 1.89-3.19 3.61-.82-.34-3.69L23 12zm-12.91 4.72-3.8-3.81 1.48-1.48 2.32 2.33 5.85-5.87 1.48 1.48-7.33 7.35z"></path>
+        </svg>
+        <span>Completed Tasks</span>
+      </div>
+      <span class="count">{{ completedCount }}</span>
     </mat-card-content>
   </mat-card>
+  
 
   <mat-card class="card-box due">
-    <mat-card-content>
+    <mat-card-content class="card-content-row">
       <div class="label">
-        <svg  fill="#6c757d" stroke-width="0" viewBox="0 0 512 512" height="24px" width="24px" class="icon1" xmlns="http://www.w3.org/2000/svg"><path d="M256 0a256 256 0 1 1 0 512A256 256 0 1 1 256 0zM232 120l0 136c0 8 4 15.5 10.7 20l96 64c11 7.4 25.9 4.4 33.3-6.7s4.4-25.9-6.7-33.3L280 243.2 280 120c0-13.3-10.7-24-24-24s-24 10.7-24 24z"></path></svg>
-        In Progress Tasks</div>
-      <div class="count">{{ pendingCount }}</div>
+        <svg fill="#6c757d" viewBox="0 0 512 512" height="24px" width="24px" class="icon1" xmlns="http://www.w3.org/2000/svg">
+          <path d="M256 0a256 256 0 1 1 0 512A256 256 0 1 1 256 0zM232 120l0 136c0 8 4 15.5 10.7 20l96 64c11 7.4 25.9 4.4 33.3-6.7s4.4-25.9-6.7-33.3L280 243.2 280 120c0-13.3-10.7-24-24-24s-24 10.7-24 24z"></path>
+        </svg>
+        <span>In Progress Tasks</span>
+      </div>
+      <span class="count">{{ pendingCount }}</span>
     </mat-card-content>
   </mat-card>
+  
   <mat-card class="card-box pending">
-    <mat-card-content>
+    <mat-card-content class="card-content-row">
       <div class="label">
-        <svg  fill="#2976aa" stroke-width="0" viewBox="0 0 24 24" height="29px" width="29px" xmlns="http://www.w3.org/2000/svg"><path d="M12 22c1.1 0 2-.9 2-2h-4a2 2 0 0 0 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"></path></svg>
-        New Tasks</div>
-      <div class="count">{{ newCount }}</div>
+        <svg fill="#2976aa" viewBox="0 0 24 24" height="29px" width="29px" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 22c1.1 0 2-.9 2-2h-4a2 2 0 0 0 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"></path>
+        </svg>
+        <span>New Tasks</span>
+      </div>
+      <span class="count">{{ newCount }}</span>
     </mat-card-content>
   </mat-card>
-
+  
   <mat-card class="card-box total">
-    <mat-card-content>
+    <mat-card-content class="card-content-row">
       <div class="label">
-        <svg  fill="#2196f3" stroke-width="0" viewBox="0 0 32 32" height="27px" width="27px"  class="icon1" xmlns="http://www.w3.org/2000/svg"><path d="M 10.28125 5.28125 L 7 8.5625 L 5.71875 7.28125 L 4.28125 8.71875 L 6.28125 10.71875 L 7 11.40625 L 7.71875 10.71875 L 11.71875 6.71875 Z M 15 7 L 15 9 L 28 9 L 28 7 Z M 10.28125 13.28125 L 7 16.5625 L 5.71875 15.28125 L 4.28125 16.71875 L 6.28125 18.71875 L 7 19.40625 L 7.71875 18.71875 L 11.71875 14.71875 Z M 15 15 L 15 17 L 28 17 L 28 15 Z M 10.28125 21.28125 L 7 24.5625 L 5.71875 23.28125 L 4.28125 24.71875 L 6.28125 26.71875 L 7 27.40625 L 7.71875 26.71875 L 11.71875 22.71875 Z M 15 23 L 15 25 L 28 25 L 28 23 Z"></path></svg>
-        Total Tasks</div>
-      <div class="count">{{ totalCount }}</div>
+        <svg fill="#2196f3" viewBox="0 0 32 32" height="27px" width="27px" class="icon1" xmlns="http://www.w3.org/2000/svg">
+          <path d="M 10.28125 5.28125 L 7 8.5625 L 5.71875 7.28125 L 4.28125 8.71875 L 6.28125 10.71875 L 7 11.40625 L 7.71875 10.71875 L 11.71875 6.71875 Z M 15 7 L 15 9 L 28 9 L 28 7 Z M 10.28125 13.28125 L 7 16.5625 L 5.71875 15.28125 L 4.28125 16.71875 L 6.28125 18.71875 L 7 19.40625 L 7.71875 18.71875 L 11.71875 14.71875 Z M 15 15 L 15 17 L 28 17 L 28 15 Z M 10.28125 21.28125 L 7 24.5625 L 5.71875 23.28125 L 4.28125 24.71875 L 6.28125 26.71875 L 7 27.40625 L 7.71875 26.71875 L 11.71875 22.71875 Z M 15 23 L 15 25 L 28 25 L 28 23 Z"></path>
+        </svg>
+        <span>Total Tasks</span>
+      </div>
+      <span class="count">{{ totalCount }}</span>
     </mat-card-content>
   </mat-card>
+  
 </div>
 
 
@@ -67,10 +88,90 @@
 <table class="task-table">
   <thead>
     <tr>
-      <th>Name</th>
-      <th>Description</th>
-      <th>Due date</th>
-      <th>Status</th>
+
+      <th (click)="sortData('name')">
+        Name
+        <span *ngIf="sortColumn === 'name'">
+          <ng-container *ngIf="sortDirection === 'asc'; else nameDownArrow">
+            <!-- Up Arrow -->
+            <svg stroke="currentColor" fill="currentColor" stroke-width="0"
+              viewBox="0 0 512 512" height="16px" width="16px"
+              xmlns="http://www.w3.org/2000/svg" style="margin-left: 5px;">
+              <path
+                d="M256 217.9L129 345c-9.4 9.4-24.6 9.4-33.9 0s-9.3-24.6 0-34L239 167c9.1-9.1 23.7-9.3 33.1-.7L417 310.9c4.7 4.7 7 10.9 7 17s-2.3 12.3-7 17c-9.4 9.4-24.6 9.4-33.9 0L256 217.9z" />
+            </svg>
+          </ng-container>
+          <ng-template #nameDownArrow>
+            <!-- Down Arrow -->
+            <svg stroke="currentColor" fill="currentColor" stroke-width="0"
+              viewBox="0 0 512 512" height="16px" width="16px"
+              xmlns="http://www.w3.org/2000/svg" style="margin-left: 5px;">
+              <path
+                d="M256 294.1L383 167c9.4-9.4 24.6-9.4 33.9 0s9.3 24.6 0 34L273 345c-9.1 9.1-23.7 9.3-33.1.7L95 201.1c-4.7-4.7-7-10.9-7-17s2.3-12.3 7-17c9.4-9.4 24.6-9.4 33.9 0l127.1 127z" />
+            </svg>
+          </ng-template>
+        </span>
+      </th>
+  
+      <th (click)="sortData('description')">
+        Description
+        <span *ngIf="sortColumn === 'description'">
+          <ng-container *ngIf="sortDirection === 'asc'; else descDownArrow">
+            <svg stroke="currentColor" fill="currentColor" stroke-width="0"
+            viewBox="0 0 512 512" height="16px" width="16px"
+            xmlns="http://www.w3.org/2000/svg" style="margin-left: 5px;">
+            <path
+              d="M256 217.9L129 345c-9.4 9.4-24.6 9.4-33.9 0s-9.3-24.6 0-34L239 167c9.1-9.1 23.7-9.3 33.1-.7L417 310.9c4.7 4.7 7 10.9 7 17s-2.3 12.3-7 17c-9.4 9.4-24.6 9.4-33.9 0L256 217.9z" />
+          </svg>                      </ng-container>
+          <ng-template #descDownArrow>
+            <svg stroke="currentColor" fill="currentColor" stroke-width="0"
+            viewBox="0 0 512 512" height="16px" width="16px"
+            xmlns="http://www.w3.org/2000/svg" style="margin-left: 5px;">
+            <path
+              d="M256 294.1L383 167c9.4-9.4 24.6-9.4 33.9 0s9.3 24.6 0 34L273 345c-9.1 9.1-23.7 9.3-33.1.7L95 201.1c-4.7-4.7-7-10.9-7-17s2.3-12.3 7-17c9.4-9.4 24.6-9.4 33.9 0l127.1 127z" />
+          </svg>                      </ng-template>
+        </span>
+      </th>
+  
+      <th (click)="sortData('duedate')">
+        Due Date
+        <span *ngIf="sortColumn === 'duedate'">
+          <ng-container *ngIf="sortDirection === 'asc'; else dateDownArrow">
+            <svg stroke="currentColor" fill="currentColor" stroke-width="0"
+            viewBox="0 0 512 512" height="16px" width="16px"
+            xmlns="http://www.w3.org/2000/svg" style="margin-left: 5px;">
+            <path
+              d="M256 217.9L129 345c-9.4 9.4-24.6 9.4-33.9 0s-9.3-24.6 0-34L239 167c9.1-9.1 23.7-9.3 33.1-.7L417 310.9c4.7 4.7 7 10.9 7 17s-2.3 12.3-7 17c-9.4 9.4-24.6 9.4-33.9 0L256 217.9z" />
+          </svg>                      </ng-container>
+          <ng-template #dateDownArrow>
+            <svg stroke="currentColor" fill="currentColor" stroke-width="0"
+            viewBox="0 0 512 512" height="16px" width="16px"
+            xmlns="http://www.w3.org/2000/svg" style="margin-left: 5px;">
+            <path
+              d="M256 294.1L383 167c9.4-9.4 24.6-9.4 33.9 0s9.3 24.6 0 34L273 345c-9.1 9.1-23.7 9.3-33.1.7L95 201.1c-4.7-4.7-7-10.9-7-17s2.3-12.3 7-17c9.4-9.4 24.6-9.4 33.9 0l127.1 127z" />
+          </svg>                      </ng-template>
+        </span>
+      </th>
+  
+      <th (click)="sortData('status')">
+        Status
+        <span *ngIf="sortColumn === 'status'">
+          <ng-container *ngIf="sortDirection === 'asc'; else statusDownArrow">
+            <svg stroke="currentColor" fill="currentColor" stroke-width="0"
+            viewBox="0 0 512 512" height="16px" width="16px"
+            xmlns="http://www.w3.org/2000/svg" style="margin-left: 5px;">
+            <path
+              d="M256 217.9L129 345c-9.4 9.4-24.6 9.4-33.9 0s-9.3-24.6 0-34L239 167c9.1-9.1 23.7-9.3 33.1-.7L417 310.9c4.7 4.7 7 10.9 7 17s-2.3 12.3-7 17c-9.4 9.4-24.6 9.4-33.9 0L256 217.9z" />
+          </svg>                      </ng-container>
+          <ng-template #statusDownArrow>
+            <svg stroke="currentColor" fill="currentColor" stroke-width="0"
+            viewBox="0 0 512 512" height="16px" width="16px"
+            xmlns="http://www.w3.org/2000/svg" style="margin-left: 5px;">
+            <path
+              d="M256 294.1L383 167c9.4-9.4 24.6-9.4 33.9 0s9.3 24.6 0 34L273 345c-9.1 9.1-23.7 9.3-33.1.7L95 201.1c-4.7-4.7-7-10.9-7-17s2.3-12.3 7-17c9.4-9.4 24.6-9.4 33.9 0l127.1 127z" />
+          </svg>                      </ng-template>
+        </span>
+      </th>
       <th>Actions</th>
     </tr>
   </thead>
@@ -131,6 +232,12 @@
       <label for="types">Type</label>
       <select id="type" [(ngModel)]="newTask.type" class="custom-input" [disabled]="isViewMode">
         <option *ngFor="let type of types" [value]="type">{{ type | titlecase }}</option>
+      </select>
+    </div>
+    <div class="custom-form-group">
+      <label for="priorities">Priority</label>
+      <select id="priority" [(ngModel)]="newTask.priority" class="custom-input" [disabled]="isViewMode">
+        <option *ngFor="let priority of priorities" [value]="priority">{{ priority | titlecase }}</option>
       </select>
     </div>
 

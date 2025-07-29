@@ -43,25 +43,7 @@ export class RegisterComponent {
   ) {}
 
   onRegister() {
-    this.authService.register(this.loginData).subscribe({
-      next: (response: string) => {
-        console.log('Register successful:', response);
-        this.Message = response;
-        this.isSuccessMessage = true;
-  
-        setTimeout(() => {
-          this.Message = '';
-          this.router.navigate(['/']);
-        }, 3000);
-      },
-      error: (error: { error: { message: string; }; }) => {
-        console.error('Registration error:', error);
-        this.Message = error.error?.message || 'Registration failed. Please try again.';
-        this.isSuccessMessage = false;
-  
-        setTimeout(() => this.Message = '', 3000);
-      }
-    });
+    //  Client-side validation before API call
     if (!this.loginData.email || !this.loginData.email.includes('@')) {
       this.Message = 'Please enter a valid email address';
       this.isSuccessMessage = false;
@@ -74,14 +56,32 @@ export class RegisterComponent {
     }
   
     if (this.Message) {
-      setTimeout(() => {
-        this.Message = '';
-      }, 3000);
+      setTimeout(() => this.Message = '', 3000);
       return;
     }
   
+    // ✅ Call register API
+    this.authService.register(this.loginData).subscribe({
+      next: (response: any) => {
+        console.log('Register successful:', response);
+        this.Message = response?.data || 'Registered successfully';
+        this.isSuccessMessage = true;
   
+        setTimeout(() => {
+          this.Message = '';
+          this.router.navigate(['/']);
+        }, 3000);
+      },
+      error: (error: any) => {
+        console.error('Registration error:', error);
+        this.Message = error?.error?.message || 'Registration failed. Please try again.';
+        this.isSuccessMessage = false;
+  
+        setTimeout(() => this.Message = '', 3000);
+      }
+    });
   }
+  
   
 
 }

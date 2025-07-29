@@ -1,27 +1,32 @@
 <div class="sidebar" [class.collapsed]="isCollapsed">
   <button class="toggle-button" (click)="toggleSidebar()" aria-label="Toggle Sidebar">
-    <mat-icon>{{ isCollapsed ? 'chevron_right' : 'chevron_left' }}</mat-icon>
+    <mat-icon>menu</mat-icon>
+    <span class="toggle-label" *ngIf="!isCollapsed">TMS</span>
   </button>
+  
 
   <ul class="menu">
-    <li class="menu-item" routerLink="/dashboard" title="Dashboard"
-    [class.active]="activeItem === 'dashboard'" 
-    (click)="activeItem = 'dashboard'"
+    <li 
+      class="menu-item"
+      routerLink="/dashboard"
+      routerLinkActive="active"
+      [routerLinkActiveOptions]="{ exact: true }"
     >
       <mat-icon>dashboard</mat-icon>
       <span class="label" *ngIf="!isCollapsed">Dashboard</span>
     </li>
-    <li class="menu-item"  title="Profile"
-    [class.active]="activeItem === 'profile'" 
-    (click)="activeItem = 'profile'; onProfile()"
-
+    <li 
+      class="menu-item"
+      routerLink="/profile"
+      routerLinkActive="active"
     >
       <mat-icon>person</mat-icon>
       <span class="label" *ngIf="!isCollapsed">Profile</span>
     </li>
-    <li class="menu-item" title="Settings"
-    [class.active]="activeItem === 'settings'" 
-    (click)="activeItem = 'settings'; onSettings()"
+    <li 
+      class="menu-item"
+      routerLink="/settings"
+      routerLinkActive="active"
     >
       <mat-icon>settings</mat-icon>
       <span class="label" *ngIf="!isCollapsed">Settings</span>

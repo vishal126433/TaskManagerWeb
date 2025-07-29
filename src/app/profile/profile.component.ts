@@ -8,19 +8,25 @@ import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatMenuModule } from '@angular/material/menu';
+import { AuthService } from '../services/auth.service';
+import { HeaderComponent } from '../header/header.component';
+
+
 import { MatButtonModule } from '@angular/material/button';
 
 
 @Component({
   selector: 'app-profile',
   standalone: true,
-  imports: [LeftMenuComponent,MatButtonModule,MatMenuModule,MatInputModule,MatFormFieldModule,HttpClientModule,CommonModule,MatIconModule,MatCardModule],
+  imports: [LeftMenuComponent,MatButtonModule,MatMenuModule,HeaderComponent,MatInputModule,MatFormFieldModule,HttpClientModule,CommonModule,MatIconModule,MatCardModule],
   templateUrl: './profile.component.html',
   styleUrl: './profile.component.css'
 })
 export class ProfileComponent {
   isCollapsed: boolean = false;
   username: string = '';
+  showLogoutConfirm = false;
+
 
 
   toggleSidebar() {
@@ -37,10 +43,12 @@ export class ProfileComponent {
       }
     }
   }
-  constructor(private http: HttpClient, private router: Router) {
+  constructor(private http: HttpClient, private router: Router, private authService: AuthService
+    ) {
     this.extractUsernameFromToken();
 
   }
+ 
 
 
 

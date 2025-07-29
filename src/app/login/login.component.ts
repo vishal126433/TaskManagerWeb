@@ -41,26 +41,29 @@ export class LoginComponent {
 
   onLogin() {
     this.authService.login(this.loginData).subscribe({
-      next: (response: { accessToken: string; }) => {
+      next: (response: any) => {
         console.log('Login successful:', response);
-        sessionStorage.setItem('authToken', response.accessToken);
-        this.authService.scheduleRefresh(response.accessToken);
+  
+        const accessToken = response?.data?.accessToken;
+        if (!accessToken) {
+          this.errorMessage = 'No access token received.';
+          return;
+        }
+  
+        sessionStorage.setItem('authToken', accessToken);
+        this.authService.scheduleRefresh(accessToken);
         localStorage.setItem('isLoggedIn', 'true');
         this.router.navigate(['/dashboard']);
         this.errorMessage = '';
       },
       error: (error: any) => {
         console.error('Login failed:', error);
-        // Show backend message if exists
-        if (error.error.message && error.error) {
-          this.errorMessage = error.error.message;
-        } else {
-          this.errorMessage = 'Login failed. Please try again later.';
-        }
+        this.errorMessage = error?.error?.message || 'Login failed. Please try again later.';
         setTimeout(() => this.errorMessage = '', 3000);
       }
     });
   }
+  
   
   
 

@@ -46,22 +46,25 @@ export class AuthService {
 
   refreshToken(): Observable<string> {
     return this.http.post<any>(`${this.baseUrl2}/Users/refresh-token`, {}, { withCredentials: true }).pipe(
-      map((res: { accessToken: string }) => {
-        if (!res.accessToken) throw new Error('No access token received');
-
+      map((res: any) => {
+        const accessToken = res?.data?.accessToken;
+        if (!accessToken) throw new Error('No access token received');
+  
         if (this.isBrowser()) {
-          sessionStorage.setItem('authToken', res.accessToken);
-          this.scheduleRefresh(res.accessToken);
+          sessionStorage.setItem('authToken', accessToken);
+          this.scheduleRefresh(accessToken);
         }
-        return res.accessToken;
+  
+        return accessToken;
       }),
       catchError((err: any) => {
         console.error('Token refresh failed:', err);
-        this.logout().subscribe(); // Ensure user is redirected to login
+        this.logout().subscribe();
         return of('');
       })
     );
   }
+  
 
   scheduleRefresh(_token: string): void {
     if (this.refreshTimer) clearInterval(this.refreshTimer);

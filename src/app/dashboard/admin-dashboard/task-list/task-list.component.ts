@@ -11,6 +11,8 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatButtonModule } from '@angular/material/button';
+import { HeaderComponent } from '../../../header/header.component';
+
 import { LeftMenuComponent } from '../../../left-menu/left-menu.component';
 import { FormsModule } from '@angular/forms';
 
@@ -27,6 +29,7 @@ import { FormsModule } from '@angular/forms';
     LeftMenuComponent,
     FormsModule,
     MatFormFieldModule,
+    HeaderComponent,
     MatInputModule
   ],
   templateUrl: './task-list.component.html',
@@ -34,6 +37,8 @@ import { FormsModule } from '@angular/forms';
 })
 export class TaskListComponent implements OnInit {
   userId: string | null = null;
+  sortColumn: string = '';
+sortDirection: 'asc' | 'desc' = 'asc';
 
   constructor(private route: ActivatedRoute,
     private router: Router,
@@ -64,6 +69,9 @@ export class TaskListComponent implements OnInit {
     this.getTasks();
     this.getStatuses();
     this.getTypes();
+    this.getPriority();
+    
+
     this.getUserNameById();
 
     console.log('User ID:', this.userId);
@@ -90,64 +98,88 @@ export class TaskListComponent implements OnInit {
     description: '',
     Duedate: '',
     type: 'general',
-    status: 'new'
+    status: 'new',
+    priority:''
   };
 
   tasks: any[] = [];
   statuses: string[] = [];
   types: string[] = [];
+  priorities: string[] = [];
 
 
-getStatuses(): void {
-  this.http.get<string[]>('https://localhost:7129/Tasks/statuslist').subscribe({
-    next: (res: string[]) => {
-      this.statuses = res;
-      console.log('Statuses:', this.statuses);
-    },
-    error: (err: any) => {
-      console.error('Error fetching statuses:', err);
-    }
-  });
-}
-getTypes(): void {
-  this.taskService.getTypes().subscribe({
-    next: (res: string[]) => {
-      this.types = res;
-      console.log('Types:', this.types);
-    },
-    error: (err: any) => {
-      console.error('Error fetching types:', err);
-    }
-  });
-}
-completedCount: number = 0;
-pendingCount: number = 0;
-newCount: number = 0;
-totalCount: number = 0;
 
-getTasks(): void {
-  const userId = this.userId; 
-
-  if (!userId) {
-    console.error('User ID not found in token');
-    return;
+  getStatuses(): void {
+    this.taskService.getStatuses().subscribe({
+      next: (res: any) => this.statuses = res.data,
+      error: (err: any) => console.error('Error fetching statuses:', err)
+    });
   }
-  this.taskService.getTasks(userId.toString()).subscribe({
-
-  // this.http.get<any[]>(`https://localhost:7129/Tasks/${userId}`).subscribe({
-    next: (res: any[]) => {
-      this.tasks = res;
-      this.totalCount = res.length;
-      this.completedCount = res.filter(task => task.status.toLowerCase() === 'completed').length;
-      this.pendingCount = res.filter(task => task.status.toLowerCase() === 'in progress').length;
-      this.newCount = res.filter(task => task.status.toLowerCase() === 'new').length;
-    },
-    error: (err: any) => {
-      console.error('Error fetching tasks:', err);
+  
+  getPriority(): void {
+    this.taskService.getPriority().subscribe({
+      next: (res: any) => this.priorities = res.data,
+      error: (err: any) => console.error('Error fetching priority:', err)
+    });
+  }
+  
+  getTypes(): void {
+    this.taskService.getTypes().subscribe({
+      next: (res: any) => {
+        this.types = res.data;
+        console.log('Types:', this.types);
+      },
+      error: (err: any) => {
+        console.error('Error fetching types:', err);
+      }
+    });
+  }
+  
+  completedCount: number = 0;
+  pendingCount: number = 0;
+  newCount: number = 0;
+  totalCount: number = 0;
+  
+  getTasks(): void {
+    const userId = this.userId; 
+  
+    if (!userId) {
+      console.error('User ID not found in token');
+      return;
     }
+  
+    this.taskService.getTasks(userId.toString()).subscribe({
+      next: (res: any) => {
+        const taskList = res.data;
+        this.tasks = taskList;
+        this.totalCount = taskList.length;
+        this.completedCount = taskList.filter((task: { status: string; }) => task.status.toLowerCase() === 'completed').length;
+        this.pendingCount = taskList.filter((task: { status: string; }) => task.status.toLowerCase() === 'in progress').length;
+        this.newCount = taskList.filter((task: { status: string; }) => task.status.toLowerCase() === 'new').length;
+      },
+      error: (err: any) => {
+        console.error('Error fetching tasks:', err);
+      }
+    });
+  }
+  
+sortData(column: string) {
+  if (this.sortColumn === column) {
+    this.sortDirection = this.sortDirection === 'asc' ? 'desc' : 'asc';
+  } else {
+    this.sortColumn = column;
+    this.sortDirection = 'asc';
+  }
+
+  this.tasks.sort((a, b) => {
+    const valueA = a[column]?.toString().toLowerCase() || '';
+    const valueB = b[column]?.toString().toLowerCase() || '';
+
+    if (valueA < valueB) return this.sortDirection === 'asc' ? -1 : 1;
+    if (valueA > valueB) return this.sortDirection === 'asc' ? 1 : -1;
+    return 0;
   });
 }
-
 getUserNameById(): void {
   const userId = this.userId;
 
@@ -155,13 +187,14 @@ getUserNameById(): void {
     console.error('User ID not found in token');
     return;
   }
-  this.taskService.getTaskss().subscribe({
 
-  // this.http.get<any[]>('https://localhost:7129/Users').subscribe({
-    next: (users: any[]) => {
-      const user = users.find(u => u.id === Number(userId));
+  this.taskService.getTaskss().subscribe({
+    next: (res: any) => {
+      const users = res.data; //Extract actual user list from 'data'
+      const user = users.find((u: any) => u.id === Number(userId));
+
       if (user) {
-        this.username = user.username; // Set the username here
+        this.username = user.username;
       } else {
         console.warn('User not found for ID:', userId);
       }
@@ -171,6 +204,7 @@ getUserNameById(): void {
     }
   });
 }
+
 
   onView(task: any): void {
     this.newTask = { ...task }; // load task to form
@@ -278,7 +312,7 @@ getUserNameById(): void {
   }
   
   resetForm(): void {
-    this.newTask = { id: 0, name: '', description: '',Duedate: '', type: 'general', status: 'new' };
+    this.newTask = { id: 0, name: '', description: '',Duedate: '', type: 'general', status: 'new', priority:'' };
     this.isEditMode = false;
     this.showTaskForm = false;
     this.isViewMode = false;

@@ -1,0 +1,31 @@
+<header class="app-header">
+    <div class="header-left">
+      <span class="logo-icon">
+        <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 20 20" aria-hidden="true" height="24px" width="24px" xmlns="http://www.w3.org/2000/svg">
+          <path d="m3.196 12.87-.825.483a.75.75 0 0 0 0 1.294l7.25 4.25a.75.75 0 0 0 .758 0l7.25-4.25a.75.75 0 0 0 0-1.294l-.825-.484-5.666 3.322a2.25 2.25 0 0 1-2.276 0L3.196 12.87Z"></path>
+          <path d="m3.196 8.87-.825.483a.75.75 0 0 0 0 1.294l7.25 4.25a.75.75 0 0 0 .758 0l7.25-4.25a.75.75 0 0 0 0-1.294l-.825-.484-5.666 3.322a2.25 2.25 0 0 1-2.276 0L3.196 8.87Z"></path>
+          <path d="M10.38 1.103a.75.75 0 0 0-.76 0l-7.25 4.25a.75.75 0 0 0 0 1.294l7.25 4.25a.75.75 0 0 0 .76 0l7.25-4.25a.75.75 0 0 0 0-1.294l-7.25-4.25Z"></path>
+        </svg>
+      </span>
+      <h1 class="header-title">TMS</h1>
+    </div>
+    <div class="dashboard-greeting">
+        <p class="greeting-message">Good {{ greetingTime }}! <span class="username">{{ username }}</span>,</p>
+    </div>
+    <button class="logout-btn" (click)="onLogout()">
+      <mat-icon>logout</mat-icon>
+    </button>
+  </header>
+  
+
+  <div *ngIf="showLogoutConfirm" class="confirm-dialog-backdrop">
+    <div class="confirm-dialog">
+      <h3 class="dialog-title">Confirm Logout</h3>
+      <p class="dialog-message">Are you sure you want to logout?</p>
+      <div class="dialog-buttons">
+        <button mat-raised-button color="primary" (click)="cancelLogout()">Cancel</button>
+        <button mat-raised-button color="warn" (click)="confirmLogout()">Yes, Logout</button>
+      </div>
+    </div>
+  </div>
+  

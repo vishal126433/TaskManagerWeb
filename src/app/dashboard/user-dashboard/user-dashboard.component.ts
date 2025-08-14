@@ -138,10 +138,6 @@ sortDirection: 'asc' | 'desc' = 'asc';
       next: (res: any) => {
         const taskList = res.data;
         this.tasks = taskList;
-        // this.totalCount = taskList.length;
-        // this.completedCount = taskList.filter((t: { status: string; }) => t.status.toLowerCase() === 'completed').length;
-        // this.pendingCount = taskList.filter((t: { status: string; }) => t.status.toLowerCase() === 'in progress').length;
-        // this.newCount = taskList.filter((t: { status: string; }) => t.status.toLowerCase() === 'new').length;
       },
       error: (err: any) => console.error('Search error:', err)
     });

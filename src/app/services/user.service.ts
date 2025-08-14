@@ -26,8 +26,6 @@ export class UserService {
     return isPlatformBrowser(this.platformId);
   }
 
-
-
 getUsers(): Observable<any[]> {
     const url = `${this.baseUrl}/Users`;
     return this.http.get<any[]>(url);
@@ -53,9 +51,6 @@ getUsers(): Observable<any[]> {
     return this.http.post<any>(url, {});
   }
   
-
- 
-
   logout(): Observable<any> {
     if (this.isBrowser()) {
       sessionStorage.removeItem('authToken');

@@ -21,7 +21,7 @@ describe('AuthGuard', () => {
   });
 
   it('should return false and navigate to login if not logged in', () => {
-    spyOn(localStorage, 'getItem').and.returnValue('false');
+    spyOn(sessionStorage, 'getItem').and.returnValue(null); // simulate not logged in
     const navigateSpy = spyOn(router, 'navigate');
     const result = guard.canActivate();
     expect(result).toBeFalse();
@@ -29,7 +29,7 @@ describe('AuthGuard', () => {
   });
 
   it('should return true if logged in', () => {
-    spyOn(localStorage, 'getItem').and.returnValue('true');
+    spyOn(sessionStorage, 'getItem').and.returnValue('mock-token'); // simulate logged in
     const result = guard.canActivate();
     expect(result).toBeTrue();
   });

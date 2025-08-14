@@ -47,11 +47,9 @@ export class AdminDashboardComponent {
   selectedFile: File | null = null;
 //   currentPage: number = 1;
 // pageSize: number = 10;  // show 10 per page
-
   isCollapsed: boolean = false;
   searchText: string = '';
   userMap: Map<number, string> = new Map();
-
   private searchSubject = new Subject<string>();
   previewData: any[] = [];
 previewColumns: string[] = [];
@@ -68,7 +66,6 @@ sortDirection: 'asc' | 'desc' = 'asc';
     description: '',
     status: 'new',
     priority: '',
-
     type:'general',
     Duedate: '',
     assignedTo:''
@@ -86,11 +83,7 @@ statuses: any[] = [];
 priorities: any[] = [];
 userList: any[] = []; 
 selectedUserId: string = '';
-
-
 types: string[] = [];
-
-
 completedCount: number = 0;
 pendingCount: number = 0;
 newCount: number = 0;
@@ -101,10 +94,7 @@ isViewMode = false;
 currentPage: number = 1;
 pageSize: number = 5;
 totalPages: number = 0;  // Fixed: previously tried to assign a value to a getter
-
 pagedPreviewData: any[] = []; // Declare pagedPreviewData as a variable
-
-
 
   selectedUser: string = '';
   constructor(
@@ -116,10 +106,7 @@ pagedPreviewData: any[] = []; // Declare pagedPreviewData as a variable
   ) {
     this.extractUsernameFromToken();
     this.getUsers();
-
     const now = new Date();
-    
-
     const options: Intl.DateTimeFormatOptions = {
       weekday: 'long',
       day: 'numeric',
@@ -129,12 +116,7 @@ pagedPreviewData: any[] = []; // Declare pagedPreviewData as a variable
     this.getTypes();
     this.getStatuses();
     this.getPriority();
-
-
-    
-
     this.setupSearchListener();
-    // Determine greeting
     const hour = now.getHours();
     if (hour < 12) this.greetingTime = 'Morning';
     else if (hour < 18) this.greetingTime = 'Afternoon';
@@ -166,13 +148,6 @@ pagedPreviewData: any[] = []; // Declare pagedPreviewData as a variable
     // });
     this.loadAllTasks(); // Show full list again
 
-    
-    
-    
-
-
-      
-
   }
  
   setupSearchListener(): void {
@@ -185,7 +160,6 @@ pagedPreviewData: any[] = []; // Declare pagedPreviewData as a variable
     this.searchSubject.next(query);
   }
 
-  
   onView(task: any): void {
     this.newTask = { ...task };
     this.isViewMode = true;
@@ -294,12 +268,8 @@ pagedPreviewData: any[] = []; // Declare pagedPreviewData as a variable
       error: (err: any) => console.error('Error fetching tasks:', err)
     });
   }
-  
-  
-  
-    
-  selectedTab: 'task' | 'user' = 'task';
 
+  selectedTab: 'task' | 'user' = 'task';
 
   extractUsernameFromToken(): void {
     const token = sessionStorage.getItem('authToken'); 
@@ -338,19 +308,16 @@ pagedPreviewData: any[] = []; // Declare pagedPreviewData as a variable
     return isNaN(date.getTime()) ? null : `${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear() % 100}`;
   }
   
-  
-
   onFileSelected(event: Event): void {
     const input = event.target as HTMLInputElement;
+  
     if (input.files && input.files.length > 0) {
       const file = input.files[0];
       const formData = new FormData();
       formData.append('file', file);
   
-      this.http.post<any>('https://localhost:7129/tasks/upload', formData).subscribe({
-        next: (res: any) => {
-          const taskList = res?.data?.data;
-  
+      this.http.post<any[]>('https://localhost:7129/tasks/upload', formData).subscribe({
+        next: (taskList: any[]) => {
           if (taskList && taskList.length > 0) {
             this.previewData = taskList.map((task: any) => {
               const formattedDate = this.formatDate(task.duedate);
@@ -383,8 +350,6 @@ pagedPreviewData: any[] = []; // Declare pagedPreviewData as a variable
     }
   }
   
-  
-  
 
 getColumnHeaders(obj: any): string[] {
   const keys = Object.keys(obj);
@@ -401,8 +366,6 @@ changePage(direction: number): void {
   this.currentPage += direction;
   this.setPagedPreviewData();
 }
-
- 
 
 getTypes(): void {
   this.taskService.getTypes().subscribe({
@@ -543,9 +506,6 @@ getTypes(): void {
 
     this.selectedFile = null;
   }
-  
-  
-
 
   cancelImport() {
     this.showImportPreview = false;

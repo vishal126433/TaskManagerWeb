@@ -64,9 +64,6 @@ export class LoginComponent {
     });
   }
   
-  
-  
-
   onSign() {
     this.router.navigate(['/register']);
   }
